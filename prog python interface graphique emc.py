@@ -3,6 +3,9 @@ from tkinter import messagebox
 from tkinter import ttk
 import sv_ttk
 import webbrowser  # Module pour ouvrir des liens dans le navigateur
+import pyglet, os # Pour la police d'écriture
+
+pyglet.font.add_file('undertale.ttf')  # Your TTF file name here
 
 # Fonction liée aux boutons
 def bouton_action_1():
@@ -25,7 +28,7 @@ sv_ttk.set_theme("dark")  # Vous pouvez changer en "light" pour un thème clair
 
 # Création du style personnalisé pour les boutons
 style = ttk.Style()
-style.configure("Large.Accent.TButton", padding=(20, 10), font=("Arial", 14), background="#007BFF", foreground="black")
+style.configure("Large.Accent.TButton", padding=(20, 10), font=("undertale", 14), background="#007BFF", foreground="black")
 style.map(
     "Large.Blue.TButton",
     background=[("active", "#0056b3"), ("pressed", "#004494")]
@@ -35,7 +38,7 @@ style.map(
 style.configure("Small.White.TLabel", foreground="white", font=("Arial", 8))  # Texte plus petit
 
 # Ajout d'un titre
-titre = ttk.Label(fenetre, text="La démocratie han", font=("Arial", 18, "bold"), anchor="center")
+titre = ttk.Label(fenetre, text="La démocratie han", font=("undertale", 18, "bold"), anchor="center")
 titre.pack(pady=20)  # Espacement au-dessus et au-dessous du titre
 
 # Création d'un cadre pour les boutons
