@@ -10,7 +10,7 @@ pseudos = []
 # Fonction liée au bouton "Jouer"
 def bouton_action_1():
     # Création de la fenêtre suivante (seconde page)
-    fenetre_jeu = tk.Tk()
+    fenetre_jeu = tk.Toplevel()  # Utilisation de Toplevel au lieu de Tk
     fenetre_jeu.title("Ajout de Pseudos")
     fenetre_jeu.geometry("500x400")  # Dimension de la fenêtre
     fenetre_jeu.configure(bg="#1c1c1c")  # Arrière-plan sombre
@@ -34,7 +34,7 @@ def bouton_action_1():
     pseudo_entry.pack(pady=20)
 
     # Bouton pour ajouter le pseudo
-    btn_ajouter_pseudo = ttk.Button(fenetre_jeu, text="Ajouter Pseudo", command=ajouter_pseudo, style="Large.Accent.TButton")
+    btn_ajouter_pseudo = ttk.Button(fenetre_jeu, text="Ajouter Pseudo", command=ajouter_pseudo, style="Accent.TButton")
     btn_ajouter_pseudo.pack(pady=10)
 
     # Listbox pour afficher les pseudos ajoutés
@@ -42,11 +42,8 @@ def bouton_action_1():
     listbox_pseudos.pack(pady=20)
 
     # Bouton pour quitter la page (retour à la page principale)
-    btn_quitter_jeu = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=fenetre_jeu.quit, style="Large.Accent.TButton")
+    btn_quitter_jeu = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=fenetre_jeu.destroy, style="Large.Accent.TButton")
     btn_quitter_jeu.pack(pady=20)
-
-    # Lancer la boucle de la nouvelle fenêtre
-    fenetre_jeu.mainloop()
 
 def bouton_action_2():
     messagebox.showinfo("Quitter", "Action pour le bouton 2")
