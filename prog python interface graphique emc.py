@@ -6,15 +6,36 @@ import webbrowser  # Module pour ouvrir des liens dans le navigateur
 
 # Liste pour stocker les pseudos ajoutés
 pseudos = []
+def supprimer_pseudo():
+    selection = listbox_pseudos.curselection()  # Récupérer l'index du pseudo sélectionné
+    if selection:  # Si un pseudo est sélectionné
+        listbox_pseudos.delete(selection)  # Supprimer le pseudo de la Listbox
+        pseudos.pop(selection[0])  # Supprimer le pseudo de la liste
+    else:
+        messagebox.showwarning("Erreur", "Veuillez sélectionner un pseudo à supprimer.")
 
+# Ajouter ce bouton dans la fenêtre_jeu
+btn_supprimer_pseudo = ttk.Button(fenetre_jeu, text="Supprimer Pseudo", command=supprimer_pseudo, style="Accent.TButton")
+btn_supprimer_pseudo.pack(pady=10)
 # Fonction liée au bouton "Jouer"
+def ajouter_pseudo():
+    if len(pseudos) >= 4:  # Limite à 4 pseudos
+        messagebox.showwarning("Erreur", "Vous ne pouvez pas ajouter plus de 4 pseudos.")
+        return
+    pseudo = pseudo_entry.get()
+    if pseudo:  # Si le pseudo n'est pas vide
+        pseudos.append(pseudo)  # Ajouter le pseudo à la liste
+        listbox_pseudos.insert(tk.END, pseudo)  # Ajouter le pseudo dans la listbox
+        pseudo_entry.delete(0, tk.END)  # Effacer le champ de texte après ajout
+    else:
+        messagebox.showwarning("Erreur", "Veuillez entrer un pseudo.")
 def bouton_action_1():
     # Création de la fenêtre suivante (seconde page)
     fenetre_jeu = tk.Toplevel()  # Utilisation de Toplevel au lieu de Tk
     fenetre_jeu.title("Ajout de Pseudos")
     fenetre_jeu.geometry("500x500")  # Dimension de la fenêtre
     fenetre_jeu.configure(bg="#1c1c1c")  # Arrière-plan sombre
-
+    fenetre_jeu.resizable(False, False)  # Pour la fenêtre secondaire
     # Fonction pour ajouter un pseudo dans la liste
     def ajouter_pseudo():
         pseudo = pseudo_entry.get()
@@ -57,6 +78,7 @@ fenetre = tk.Tk()
 fenetre.title("Jeu EMC")
 fenetre.geometry("500x400")  # Taille de la fenêtre
 fenetre.configure(bg="#1c1c1c")  # Assurer une couleur de fond cohérente
+fenetre.resizable(False, False)  # Pour la fenêtre principale
 
 # Application du thème sv-ttk
 sv.set_theme("dark")  # Appliquer le thème sombre
