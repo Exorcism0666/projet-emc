@@ -12,7 +12,7 @@ def bouton_action_1():
     # Création de la fenêtre suivante (seconde page)
     fenetre_jeu = tk.Toplevel()  # Utilisation de Toplevel au lieu de Tk
     fenetre_jeu.title("Ajout de Pseudos")
-    fenetre_jeu.geometry("500x400")  # Dimension de la fenêtre
+    fenetre_jeu.geometry("500x500")  # Dimension de la fenêtre
     fenetre_jeu.configure(bg="#1c1c1c")  # Arrière-plan sombre
 
     # Fonction pour ajouter un pseudo dans la liste
