@@ -35,11 +35,14 @@ def bouton_action_1():
     fenetre.destroy()
 
     # Création de la fenêtre d'enregistrement des pseudonymes
-    fenetre_jeu = tk.Tk()  # Utilisation de Tk pour la nouvelle fenêtre principale
+    fenetre_jeu = tk.Toplevel()  # Utilisation de Toplevel pour hériter du thème
     fenetre_jeu.title("Ajout de Pseudos")
     fenetre_jeu.geometry("500x500")  # Dimension de la fenêtre
     fenetre_jeu.configure(bg="#1c1c1c")  # Arrière-plan sombre
     fenetre_jeu.resizable(False, False)  # Pour la fenêtre secondaire
+
+    # Appliquer le thème sv-ttk à la nouvelle fenêtre
+    sv.set_theme("dark")
 
     # Titre de la nouvelle page
     titre_jeu = ttk.Label(fenetre_jeu, text="Ajoutez vos pseudos", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white")
@@ -62,7 +65,7 @@ def bouton_action_1():
     btn_supprimer_pseudo = ttk.Button(fenetre_jeu, text="Supprimer Pseudo", command=supprimer_pseudo, style="Accent.TButton")
     btn_supprimer_pseudo.pack(pady=10)
 
-    # Bouton pour quitter la page (retour à la page principale)
+    # Bouton pour quitter la page (retour à l'accueil)
     btn_quitter_jeu = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=fenetre_jeu.destroy, style="Large.Accent.TButton")
     btn_quitter_jeu.pack(pady=20)
 
