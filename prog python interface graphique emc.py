@@ -6,6 +6,8 @@ import webbrowser  # Module pour ouvrir des liens dans le navigateur
 
 # Liste pour stocker les pseudos ajoutés
 pseudos = []
+
+# Fonction pour supprimer un pseudo
 def supprimer_pseudo():
     selection = listbox_pseudos.curselection()  # Récupérer l'index du pseudo sélectionné
     if selection:  # Si un pseudo est sélectionné
@@ -14,11 +16,8 @@ def supprimer_pseudo():
     else:
         messagebox.showwarning("Erreur", "Veuillez sélectionner un pseudo à supprimer.")
 
-# Ajouter ce bouton dans la fenêtre_jeu
-btn_supprimer_pseudo = ttk.Button(fenetre_jeu, text="Supprimer Pseudo", command=supprimer_pseudo, style="Accent.TButton")
-btn_supprimer_pseudo.pack(pady=10)
-# Fonction liée au bouton "Jouer"
-def ajouter_pseudo():
+# Fonction pour ajouter un pseudo
+def ajouter_pseudo(pseudo_entry, listbox_pseudos):
     if len(pseudos) >= 4:  # Limite à 4 pseudos
         messagebox.showwarning("Erreur", "Vous ne pouvez pas ajouter plus de 4 pseudos.")
         return
@@ -29,6 +28,7 @@ def ajouter_pseudo():
         pseudo_entry.delete(0, tk.END)  # Effacer le champ de texte après ajout
     else:
         messagebox.showwarning("Erreur", "Veuillez entrer un pseudo.")
+
 def bouton_action_1():
     # Création de la fenêtre suivante (seconde page)
     fenetre_jeu = tk.Toplevel()  # Utilisation de Toplevel au lieu de Tk
@@ -36,15 +36,6 @@ def bouton_action_1():
     fenetre_jeu.geometry("500x500")  # Dimension de la fenêtre
     fenetre_jeu.configure(bg="#1c1c1c")  # Arrière-plan sombre
     fenetre_jeu.resizable(False, False)  # Pour la fenêtre secondaire
-    # Fonction pour ajouter un pseudo dans la liste
-    def ajouter_pseudo():
-        pseudo = pseudo_entry.get()
-        if pseudo:  # Si le pseudo n'est pas vide
-            pseudos.append(pseudo)  # Ajouter le pseudo à la liste
-            listbox_pseudos.insert(tk.END, pseudo)  # Ajouter le pseudo dans la listbox
-            pseudo_entry.delete(0, tk.END)  # Effacer le champ de texte après ajout
-        else:
-            messagebox.showwarning("Erreur", "Veuillez entrer un pseudo.")
 
     # Titre de la nouvelle page
     titre_jeu = ttk.Label(fenetre_jeu, text="Ajoutez vos pseudos", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white")
@@ -54,13 +45,17 @@ def bouton_action_1():
     pseudo_entry = ttk.Entry(fenetre_jeu, font=("Arial", 16))
     pseudo_entry.pack(pady=20)
 
-    # Bouton pour ajouter le pseudo
-    btn_ajouter_pseudo = ttk.Button(fenetre_jeu, text="Ajouter Pseudo", command=ajouter_pseudo, style="Accent.TButton")
-    btn_ajouter_pseudo.pack(pady=10)
-
     # Listbox pour afficher les pseudos ajoutés
     listbox_pseudos = tk.Listbox(fenetre_jeu, font=("Arial", 14), height=5)
     listbox_pseudos.pack(pady=20)
+
+    # Bouton pour ajouter le pseudo
+    btn_ajouter_pseudo = ttk.Button(fenetre_jeu, text="Ajouter Pseudo", command=lambda: ajouter_pseudo(pseudo_entry, listbox_pseudos), style="Accent.TButton")
+    btn_ajouter_pseudo.pack(pady=10)
+
+    # Bouton pour supprimer le pseudo
+    btn_supprimer_pseudo = ttk.Button(fenetre_jeu, text="Supprimer Pseudo", command=supprimer_pseudo, style="Accent.TButton")
+    btn_supprimer_pseudo.pack(pady=10)
 
     # Bouton pour quitter la page (retour à la page principale)
     btn_quitter_jeu = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=fenetre_jeu.destroy, style="Large.Accent.TButton")
