@@ -11,8 +11,9 @@ pseudos = []
 def supprimer_pseudo():
     selection = listbox_pseudos.curselection()  # Récupérer l'index du pseudo sélectionné
     if selection:  # Si un pseudo est sélectionné
-        listbox_pseudos.delete(selection)  # Supprimer le pseudo de la Listbox
-        pseudos.pop(selection[0])  # Supprimer le pseudo de la liste
+        index = selection[0]  # Récupérer l'index de la sélection
+        listbox_pseudos.delete(index)  # Supprimer le pseudo de la Listbox
+        pseudos.pop(index)  # Supprimer le pseudo de la liste
     else:
         messagebox.showwarning("Erreur", "Veuillez sélectionner un pseudo à supprimer.")
 
@@ -30,8 +31,11 @@ def ajouter_pseudo(pseudo_entry, listbox_pseudos):
         messagebox.showwarning("Erreur", "Veuillez entrer un pseudo.")
 
 def bouton_action_1():
-    # Création de la fenêtre suivante (seconde page)
-    fenetre_jeu = tk.Toplevel()  # Utilisation de Toplevel au lieu de Tk
+    # Fermer la fenêtre principale
+    fenetre.destroy()
+
+    # Création de la fenêtre d'enregistrement des pseudonymes
+    fenetre_jeu = tk.Tk()  # Utilisation de Tk pour la nouvelle fenêtre principale
     fenetre_jeu.title("Ajout de Pseudos")
     fenetre_jeu.geometry("500x500")  # Dimension de la fenêtre
     fenetre_jeu.configure(bg="#1c1c1c")  # Arrière-plan sombre
@@ -46,6 +50,7 @@ def bouton_action_1():
     pseudo_entry.pack(pady=20)
 
     # Listbox pour afficher les pseudos ajoutés
+    global listbox_pseudos
     listbox_pseudos = tk.Listbox(fenetre_jeu, font=("Arial", 14), height=5)
     listbox_pseudos.pack(pady=20)
 
@@ -60,6 +65,9 @@ def bouton_action_1():
     # Bouton pour quitter la page (retour à la page principale)
     btn_quitter_jeu = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=fenetre_jeu.destroy, style="Large.Accent.TButton")
     btn_quitter_jeu.pack(pady=20)
+
+    # Boucle principale de la nouvelle fenêtre
+    fenetre_jeu.mainloop()
 
 def bouton_action_2():
     messagebox.showinfo("Quitter", "Action pour le bouton 2")
@@ -88,8 +96,11 @@ style.map(
 )
 
 # Ajout d'un titre
-titre = ttk.Label(fenetre, text="La démocratie han", font=("Arial", 18, "bold"), anchor="center", background="#1c1c1c", foreground="white")
+titre = ttk.Label(fenetre, text="La démocratie", font=("Arial", 18, "bold"), anchor="center", background="#1c1c1c", foreground="white")
 titre.pack(pady=20)
+
+titre = ttk.Label(fenetre, text="Ce jeu est fait pour tester vos connaissance ", font=("Arial", 10, "bold"), anchor="center", background="#1c1c1c", foreground="white")
+titre.pack(pady=6)
 
 # Création d'un cadre pour les boutons
 cadre_boutons = ttk.Frame(fenetre)
