@@ -37,7 +37,7 @@ def bouton_action_1():
     # Création de la fenêtre d'enregistrement des pseudonymes
     fenetre_jeu = tk.Toplevel(fenetre)  # Utilisation de Toplevel pour hériter du thème
     fenetre_jeu.title("Ajout de Pseudos")
-    fenetre_jeu.geometry("600x600")  # Dimension de la fenêtre
+    fenetre_jeu.geometry("600x550")  # Dimension de la fenêtre
     fenetre_jeu.configure(bg="#1c1c1c")  # Arrière-plan sombre
     fenetre_jeu.resizable(False, False)  # Pour la fenêtre secondaire
 
@@ -59,13 +59,25 @@ def bouton_action_1():
 
     # Titre de la nouvelle page
     titre_jeu = ttk.Label(fenetre_jeu, text="Ajoutez vos pseudos", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white")
-    titre_jeu.pack(pady=20)
+    titre_jeu.pack(pady=10)
     titre_jeu = ttk.Label(fenetre_jeu, text="Limite de 4 joueurs !", font=("Arial", 10, "bold"), anchor="center", background="#1c1c1c", foreground="white")
     titre_jeu.pack(pady=20)
 
-    # Champ de texte pour le pseudo
-    pseudo_entry = ttk.Entry(fenetre_jeu, font=("Arial", 16))
-    pseudo_entry.pack(pady=20)
+    # Fonction de validation pour limiter les caractères à 16
+    def valider_texte(P):
+        if len(P) > 16:  # Si le texte dépasse 16 caractères
+            return False
+        return True
+
+    # Application de la validation
+    validate_command = fenetre_jeu.register(valider_texte)
+
+    # Champ de texte pour le pseudo avec validation
+    pseudo_entry = ttk.Entry(fenetre_jeu, font=("Arial", 16), validate="key", validatecommand=(validate_command, "%P"))
+    pseudo_entry.pack(pady=3)
+
+    titre_jeu = ttk.Label(fenetre_jeu, text="(limite de 16 caractères)", font=("Arial", 10, "bold"), anchor="center", background="#1c1c1c", foreground="white")
+    titre_jeu.pack(pady=10)
 
     # Listbox pour afficher les pseudos ajoutés
     global listbox_pseudos
@@ -157,5 +169,5 @@ mention_copyright = ttk.Label(
 )
 mention_copyright.place(relx=0.0, rely=1.0, anchor="sw", x=10, y=-10)
 
-# Boucle principale de l'application
+# Boucle principale
 fenetre.mainloop()
