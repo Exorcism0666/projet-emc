@@ -81,8 +81,8 @@ def bouton_action_1():
     btn_supprimer_pseudo.pack(pady=10)
 
     # Bouton pour quitter la page (retour à la page principale)
-    btn_quitter_jeu = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=retour_accueil, style="Large.Accent.TButton")
-    btn_quitter_jeu.pack(pady=20)
+    btn_quitter_jeu = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=retour_accueil, style="Black.TButton")
+    btn_quitter_jeu.place(relx=0.0, rely=1.0, anchor="sw", x=10, y=-10)
 
     # Boucle principale de la nouvelle fenêtre
     fenetre_jeu.mainloop()
