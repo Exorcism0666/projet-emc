@@ -37,7 +37,7 @@ def bouton_action_1():
     # Création de la fenêtre d'enregistrement des pseudonymes
     fenetre_jeu = tk.Toplevel(fenetre)  # Utilisation de Toplevel pour hériter du thème
     fenetre_jeu.title("Ajout de Pseudos")
-    fenetre_jeu.geometry("500x500")  # Dimension de la fenêtre
+    fenetre_jeu.geometry("600x600")  # Dimension de la fenêtre
     fenetre_jeu.configure(bg="#1c1c1c")  # Arrière-plan sombre
     fenetre_jeu.resizable(False, False)  # Pour la fenêtre secondaire
 
@@ -59,6 +59,8 @@ def bouton_action_1():
 
     # Titre de la nouvelle page
     titre_jeu = ttk.Label(fenetre_jeu, text="Ajoutez vos pseudos", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white")
+    titre_jeu.pack(pady=20)
+    titre_jeu = ttk.Label(fenetre_jeu, text="Limite de 4 joueurs !", font=("Arial", 10, "bold"), anchor="center", background="#1c1c1c", foreground="white")
     titre_jeu.pack(pady=20)
 
     # Champ de texte pour le pseudo
