@@ -117,7 +117,7 @@ def afficher_boutons():
     btn_quitter.pack(pady=15)
 
 cadre_boutons = ttk.Frame(fenetre)
-cadre_boutons.place(relx=0.5, rely=0.5, anchor="center")
+cadre_boutons.place(relx=0.5, rely=0.55, anchor="center")
 
 btn_jouer = ttk.Button(cadre_boutons, style="Large.Accent.TButton", text="Jouer", command=ouvrir_fenetre_jeu)
 btn_quitter = ttk.Button(cadre_boutons, style="Large.Accent.TButton", text="Quitter", command=fenetre.destroy)
