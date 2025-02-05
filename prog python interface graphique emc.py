@@ -38,8 +38,8 @@ def supprimer_pseudo():
 def ouvrir_fenetre_jeu():
     fenetre.withdraw()
     fenetre_jeu = tk.Toplevel(fenetre)
-    fenetre_jeu.title("Ajout de Pseudos")
-    fenetre_jeu.geometry("600x550")
+    fenetre_jeu.title("Inscriptions des joueurs")
+    fenetre_jeu.geometry("400x450")
     fenetre_jeu.configure(bg="#1c1c1c")
     fenetre_jeu.resizable(False, False)
     sv.set_theme("dark")
@@ -54,19 +54,29 @@ def ouvrir_fenetre_jeu():
 
     fenetre_jeu.protocol("WM_DELETE_WINDOW", on_close)
 
-    ttk.Label(fenetre_jeu, text="Ajoutez vos pseudos", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white").pack(pady=10)
-    ttk.Label(fenetre_jeu, text="Limite de 4 joueurs !", font=("Arial", 10, "bold"), background="#1c1c1c", foreground="white").pack(pady=20)
+    ttk.Label(fenetre_jeu, text="Inscriptions des joueurs!", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white").pack(pady=10)
+    ttk.Label(fenetre_jeu, text="Limite de 4 joueurs !", font=("Arial", 10, "bold italic"), background="#1c1c1c", foreground="white").pack(pady=20)
 
-    pseudo_entry = ttk.Entry(fenetre_jeu, font=("Arial", 16), justify="center")
+    # Fonction de validation pour limiter les caractères à 16
+    def valider_texte(P):
+        if len(P) > 16:  # Si le texte dépasse 16 caractères
+            return False
+        return True
+
+    # Application de la validation
+    validate_command = fenetre_jeu.register(valider_texte)
+
+    # Champ de texte pour le pseudo avec validation et texte centré
+    pseudo_entry = ttk.Entry(fenetre_jeu, font=("Arial", 16), validate="key", validatecommand=(validate_command, "%P"), justify="center")
     pseudo_entry.pack(pady=3)
-    ttk.Label(fenetre_jeu, text="(limite de 16 caractères)", font=("Arial", 10, "bold"), background="#1c1c1c", foreground="white").pack(pady=10)
+    ttk.Label(fenetre_jeu, text="(limite de 16 caractères)", font=("Arial", 10, "italic"), background="#1c1c1c", foreground="white").pack(pady=10)
 
     global listbox_pseudos
     listbox_pseudos = tk.Listbox(fenetre_jeu, font=("Courier", 14), height=4, width=20, justify="center")
     listbox_pseudos.pack(pady=10)
 
-    ttk.Button(fenetre_jeu, text="Ajouter Pseudo", style="Accent.TButton", command=lambda: ajouter_pseudo(pseudo_entry, listbox_pseudos)).pack(pady=10)
-    ttk.Button(fenetre_jeu, text="Supprimer Pseudo", style="Accent.TButton", command=supprimer_pseudo).pack(pady=10)
+    ttk.Button(fenetre_jeu, text="Ajouter un pseudo", style="Accent.TButton", command=lambda: ajouter_pseudo(pseudo_entry, listbox_pseudos)).pack(pady=10)
+    ttk.Button(fenetre_jeu, text="Supprimer un pseudo", style="Accent.TButton", command=supprimer_pseudo).pack(pady=10)
     btn_retour = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=retour_accueil)
     btn_retour.place(relx=0.0, rely=1.0, anchor="sw", x=10, y=-10)
 
