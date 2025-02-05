@@ -72,8 +72,8 @@ def bouton_action_1():
     # Application de la validation
     validate_command = fenetre_jeu.register(valider_texte)
 
-    # Champ de texte pour le pseudo avec validation
-    pseudo_entry = ttk.Entry(fenetre_jeu, font=("Arial", 16), validate="key", validatecommand=(validate_command, "%P"))
+    # Champ de texte pour le pseudo avec validation et texte centré
+    pseudo_entry = ttk.Entry(fenetre_jeu, font=("Arial", 16), validate="key", validatecommand=(validate_command, "%P"), justify="center")
     pseudo_entry.pack(pady=3)
 
     titre_jeu = ttk.Label(fenetre_jeu, text="(limite de 16 caractères)", font=("Arial", 10, "bold"), anchor="center", background="#1c1c1c", foreground="white")
