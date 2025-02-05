@@ -32,17 +32,30 @@ def ajouter_pseudo(pseudo_entry, listbox_pseudos):
 
 def bouton_action_1():
     # Fermer la fenêtre principale
-    fenetre.destroy()
+    fenetre.withdraw()  # Cache la fenêtre principale au lieu de la détruire
 
     # Création de la fenêtre d'enregistrement des pseudonymes
-    fenetre_jeu = tk.Toplevel()  # Utilisation de Toplevel pour hériter du thème
+    fenetre_jeu = tk.Toplevel(fenetre)  # Utilisation de Toplevel pour hériter du thème
     fenetre_jeu.title("Ajout de Pseudos")
     fenetre_jeu.geometry("500x500")  # Dimension de la fenêtre
     fenetre_jeu.configure(bg="#1c1c1c")  # Arrière-plan sombre
     fenetre_jeu.resizable(False, False)  # Pour la fenêtre secondaire
 
-    # Appliquer le thème sv-ttk à la nouvelle fenêtre
+    # Appliquer le thème sv-ttk dans la nouvelle fenêtre
     sv.set_theme("dark")
+
+    # Fonction pour revenir à l'accueil
+    def retour_accueil():
+        fenetre_jeu.destroy()
+        fenetre.deiconify()  # Réafficher la fenêtre principale
+
+    # Fonction pour détecter la fermeture de la fenêtre secondaire
+    def on_close():
+        fenetre.deiconify()  # Réafficher la fenêtre principale
+        fenetre_jeu.destroy()  # Détruire la fenêtre secondaire
+
+    # Attacher l'événement de fermeture à la croix (X)
+    fenetre_jeu.protocol("WM_DELETE_WINDOW", on_close)
 
     # Titre de la nouvelle page
     titre_jeu = ttk.Label(fenetre_jeu, text="Ajoutez vos pseudos", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white")
@@ -65,8 +78,8 @@ def bouton_action_1():
     btn_supprimer_pseudo = ttk.Button(fenetre_jeu, text="Supprimer Pseudo", command=supprimer_pseudo, style="Accent.TButton")
     btn_supprimer_pseudo.pack(pady=10)
 
-    # Bouton pour quitter la page (retour à l'accueil)
-    btn_quitter_jeu = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=fenetre_jeu.destroy, style="Large.Accent.TButton")
+    # Bouton pour quitter la page (retour à la page principale)
+    btn_quitter_jeu = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=retour_accueil, style="Large.Accent.TButton")
     btn_quitter_jeu.pack(pady=20)
 
     # Boucle principale de la nouvelle fenêtre
