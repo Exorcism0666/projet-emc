@@ -78,6 +78,15 @@ fenetre.configure(bg="#1c1c1c")
 fenetre.resizable(False, False)
 sv.set_theme("dark")
 
+# Création du style personnalisé pour les boutons
+style = ttk.Style()
+style.configure("Large.Accent.TButton", padding=(20, 10), font=("Arial", 14))
+style.map(
+    "Large.Accent.TButton",
+    foreground=[("pressed", "white"), ("active", "#E0E0E0")],
+    background=[("pressed", "#444"), ("active", "#666")]
+)
+
 # Effet de fondu pour le titre
 def effet_fondu(opacity=0):
     if opacity <= 1.0:
@@ -86,14 +95,14 @@ def effet_fondu(opacity=0):
         fenetre.after(50, effet_fondu, opacity + 0.05)
 
 # Texte avec affichage progressif
-description = "Ce jeu est fait pour tester vos connaissances"
+description = "Un jeu où la démocratie règne… enfin, jusqu'à ce que quelqu’un triche !"
 def afficher_texte(index=0):
     if index < len(description):
         texte_intro.config(text=description[:index+1])
         fenetre.after(50, afficher_texte, index+1)
 
 # Ajout du titre avec effet de fondu
-titre = ttk.Label(fenetre, text="La démocratie", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white")
+titre = ttk.Label(fenetre, text="🎭 DémocraTroll\nÀ vous de jouer (ou de manipuler !)", justify="center", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white")
 titre.pack(pady=20)
 effet_fondu()
 
@@ -110,8 +119,8 @@ def afficher_boutons():
 cadre_boutons = ttk.Frame(fenetre)
 cadre_boutons.place(relx=0.5, rely=0.5, anchor="center")
 
-btn_jouer = ttk.Button(cadre_boutons, style="Accent.TButton", text="Jouer", command=ouvrir_fenetre_jeu)
-btn_quitter = ttk.Button(cadre_boutons, style="Accent.TButton", text="Quitter", command=fenetre.destroy)
+btn_jouer = ttk.Button(cadre_boutons, style="Large.Accent.TButton", text="Jouer", command=ouvrir_fenetre_jeu)
+btn_quitter = ttk.Button(cadre_boutons, style="Large.Accent.TButton", text="Quitter", command=fenetre.destroy)
 fenetre.after(1500, afficher_boutons)
 
 # Mentions légales
