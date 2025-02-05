@@ -66,8 +66,9 @@ def ouvrir_fenetre_jeu():
     listbox_pseudos.pack(pady=10)
 
     ttk.Button(fenetre_jeu, text="Ajouter Pseudo", style="Accent.TButton", command=lambda: ajouter_pseudo(pseudo_entry, listbox_pseudos)).pack(pady=10)
-    ttk.Button(fenetre_jeu, text="Supprimer Pseudo",  style="Accent.TButton", command=supprimer_pseudo).pack(pady=10)
-    ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=retour_accueil).pack(pady=10)
+    ttk.Button(fenetre_jeu, text="Supprimer Pseudo", style="Accent.TButton", command=supprimer_pseudo).pack(pady=10)
+    btn_retour = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=retour_accueil)
+    btn_retour.place(relx=0.0, rely=1.0, anchor="sw", x=10, y=-10)
 
 # Création de la fenêtre principale
 fenetre = tk.Tk()
@@ -109,8 +110,8 @@ def afficher_boutons():
 cadre_boutons = ttk.Frame(fenetre)
 cadre_boutons.place(relx=0.5, rely=0.5, anchor="center")
 
-btn_jouer = ttk.Button(cadre_boutons, text="Jouer",  style="Accent.TButton", command=ouvrir_fenetre_jeu)
-btn_quitter = ttk.Button(cadre_boutons, text="Quitter",  style="Accent.TButton", command=fenetre.destroy)
+btn_jouer = ttk.Button(cadre_boutons, style="Accent.TButton", text="Jouer", command=ouvrir_fenetre_jeu)
+btn_quitter = ttk.Button(cadre_boutons, style="Accent.TButton", text="Quitter", command=fenetre.destroy)
 fenetre.after(1500, afficher_boutons)
 
 # Mentions légales
