@@ -25,7 +25,7 @@ def ajouter_pseudo(pseudo_entry, listbox_pseudos):
     pseudo = pseudo_entry.get()
     if pseudo:  # Si le pseudo n'est pas vide
         pseudos.append(pseudo)  # Ajouter le pseudo à la liste
-        listbox_pseudos.insert(tk.END, pseudo)  # Ajouter le pseudo dans la listbox
+        listbox_pseudos.insert(tk.END, pseudo.center(16))  # Ajouter le pseudo dans la listbox en le centrant (16 caractères de large)
         pseudo_entry.delete(0, tk.END)  # Effacer le champ de texte après ajout
     else:
         messagebox.showwarning("Erreur", "Veuillez entrer un pseudo.")
@@ -79,10 +79,14 @@ def bouton_action_1():
     titre_jeu = ttk.Label(fenetre_jeu, text="(limite de 16 caractères)", font=("Arial", 10, "bold"), anchor="center", background="#1c1c1c", foreground="white")
     titre_jeu.pack(pady=10)
 
+    # Création d'un cadre pour centrer la listbox
+    frame_listbox = ttk.Frame(fenetre_jeu, style="Dark.TFrame")
+    frame_listbox.pack(pady=10, fill="x", padx=30)
+
     # Listbox pour afficher les pseudos ajoutés
     global listbox_pseudos
-    listbox_pseudos = tk.Listbox(fenetre_jeu, font=("Arial", 14), height=5)
-    listbox_pseudos.pack(pady=20)
+    listbox_pseudos = tk.Listbox(frame_listbox, font=("Arial", 14), height=5, justify="center")
+    listbox_pseudos.pack(pady=10, fill="both", expand=True)
 
     # Bouton pour ajouter le pseudo
     btn_ajouter_pseudo = ttk.Button(fenetre_jeu, text="Ajouter Pseudo", command=lambda: ajouter_pseudo(pseudo_entry, listbox_pseudos), style="Accent.TButton")
