@@ -18,6 +18,9 @@ def ajouter_pseudo(pseudo_entry, listbox_pseudos):
     pseudo = pseudo_entry.get()
     if pseudo:
         pseudo = pseudo.center(20)  # Formatage pour 20 caractères centrés
+        if pseudo in pseudos:
+            messagebox.showwarning("Erreur", "Ce pseudonyme est déjà utilisé par un autre joueur.")
+            return
         pseudos.append(pseudo)
         listbox_pseudos.insert(tk.END, pseudo)
         pseudo_entry.delete(0, tk.END)
@@ -59,14 +62,10 @@ def ouvrir_fenetre_jeu():
 
     # Fonction de validation pour limiter les caractères à 16
     def valider_texte(P):
-        if len(P) > 16:  # Si le texte dépasse 16 caractères
-            return False
-        return True
+        return len(P) <= 16
 
-    # Application de la validation
     validate_command = fenetre_jeu.register(valider_texte)
 
-    # Champ de texte pour le pseudo avec validation et texte centré
     pseudo_entry = ttk.Entry(fenetre_jeu, font=("Arial", 16), validate="key", validatecommand=(validate_command, "%P"), justify="center")
     pseudo_entry.pack(pady=3)
     ttk.Label(fenetre_jeu, text="(limite de 16 caractères)", font=("Arial", 10, "italic"), background="#1c1c1c", foreground="white").pack(pady=10)
@@ -88,14 +87,8 @@ fenetre.configure(bg="#1c1c1c")
 fenetre.resizable(False, False)
 sv.set_theme("dark")
 
-# Création du style personnalisé pour les boutons
 style = ttk.Style()
 style.configure("Large.Accent.TButton", padding=(20, 10), font=("Arial", 14))
-style.map(
-    "Large.Accent.TButton",
-    foreground=[("pressed", "white"), ("active", "#E0E0E0")],
-    background=[("pressed", "#444"), ("active", "#666")]
-)
 
 # Effet de fondu pour le titre
 def effet_fondu(opacity=0):
@@ -104,45 +97,25 @@ def effet_fondu(opacity=0):
         titre.config(foreground=couleur)
         fenetre.after(50, effet_fondu, opacity + 0.05)
 
-# Texte avec affichage progressif
 description = "Un jeu où la démocratie règne… enfin, jusqu'à ce que quelqu’un triche !"
 def afficher_texte(index=0):
     if index < len(description):
         texte_intro.config(text=description[:index+1])
         fenetre.after(50, afficher_texte, index+1)
 
-# Ajout du titre avec effet de fondu
 titre = ttk.Label(fenetre, text="🎭 DémocraTroll\nÀ vous de jouer (ou de manipuler !)", justify="center", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white")
 titre.pack(pady=20)
 effet_fondu()
 
-# Ajout du texte d'introduction avec animation
 texte_intro = ttk.Label(fenetre, text="", font=("Arial", 10, "bold"), background="#1c1c1c", foreground="white")
 texte_intro.pack(pady=6)
 afficher_texte()
-
-# Boutons principaux avec animation
-def afficher_boutons():
-    btn_jouer.pack(pady=15)
-    btn_quitter.pack(pady=15)
 
 cadre_boutons = ttk.Frame(fenetre)
 cadre_boutons.place(relx=0.5, rely=0.55, anchor="center")
 
 btn_jouer = ttk.Button(cadre_boutons, style="Large.Accent.TButton", text="Jouer", command=ouvrir_fenetre_jeu)
 btn_quitter = ttk.Button(cadre_boutons, style="Large.Accent.TButton", text="Quitter", command=fenetre.destroy)
-fenetre.after(1500, afficher_boutons)
+fenetre.after(1500, lambda: (btn_jouer.pack(pady=15), btn_quitter.pack(pady=15)))
 
-# Mentions légales
-mention_license = ttk.Label(fenetre, text="Projet d'EMC sous licence ", font=("Arial", 8), background="#1c1c1c", foreground="white")
-mention_license.place(relx=0.0, rely=1.0, anchor="sw", x=10, y=-30)
-
-lien_mit = tk.Label(fenetre, text="MIT", fg="white", bg="#1c1c1c", font=("Arial", 8, "underline"), cursor="hand2")
-lien_mit.place(relx=0.0, rely=1.0, anchor="sw", x=134, y=-28)
-lien_mit.bind("<Button-1>", lambda e: ouvrir_lien_mit())
-
-mention_copyright = ttk.Label(fenetre, text="Copyright © Doisne Lilou, Dubus Yanis, Ryan Cordier, Alban Bloise", font=("Arial", 8), background="#1c1c1c", foreground="white")
-mention_copyright.place(relx=0.0, rely=1.0, anchor="sw", x=10, y=-10)
-
-# Boucle principale
 fenetre.mainloop()
