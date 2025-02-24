@@ -69,16 +69,18 @@ def ouvrir_fenetre_jeu():
     def retour_accueil():
         fenetre_jeu.destroy()
         fenetre.deiconify()
+        effet_fondu(0)
 
     def on_close():
         fenetre.deiconify()
+        effet_fondu(0)
         fenetre_jeu.destroy()
 
     fenetre_jeu.protocol("WM_DELETE_WINDOW", on_close)
 
     ttk.Label(fenetre_jeu, text="Inscriptions des joueurs!", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white").pack(pady=10)
     ttk.Label(fenetre_jeu, text="Limite de 4 joueurs !", font=("Arial", 10, "bold italic"), background="#1c1c1c", foreground="white").pack(pady=20)
-
+ # Fonction de validation pour limiter les caractères à 16
     def valider_texte(P):
         return len(P) <= 16
 
@@ -107,7 +109,7 @@ sv.set_theme("dark")
 
 style = ttk.Style()
 style.configure("Large.Accent.TButton", padding=(20, 10), font=("Arial", 14))
-
+# Effet de fondu pour le titre
 def effet_fondu(opacity=0):
     if opacity <= 1.0:
         couleur = f"#{int(opacity * 255):02x}{int(opacity * 255):02x}{int(opacity * 255):02x}"
