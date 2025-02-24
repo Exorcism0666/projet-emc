@@ -10,22 +10,34 @@ pseudos = []
 def ouvrir_lien_mit():
     webbrowser.open("https://github.com/Exorcism0666/projet-emc/blob/main/LICENSE")
 
+# Fonction pour afficher un message bloquant
+def afficher_message_bloquant(titre, message):
+    popup = tk.Toplevel(fenetre)
+    popup.title(titre)
+    popup.geometry("300x150")
+    popup.configure(bg="#1c1c1c")
+    popup.resizable(False, False)
+    popup.grab_set()
+
+    ttk.Label(popup, text=message, font=("Arial", 12), background="#1c1c1c", foreground="white").pack(pady=20)
+    ttk.Button(popup, text="OK", command=popup.destroy).pack()
+
 # Fonction pour ajouter un pseudo
 def ajouter_pseudo(pseudo_entry, listbox_pseudos):
     if len(pseudos) >= 4:
-        messagebox.showwarning("Erreur", "Vous ne pouvez pas ajouter plus de 4 pseudos.")
+        afficher_message_bloquant("Erreur", "Vous ne pouvez pas ajouter plus de 4 pseudos.")
         return
     pseudo = pseudo_entry.get()
     if pseudo:
         pseudo = pseudo.center(20)  # Formatage pour 20 caractères centrés
         if pseudo in pseudos:
-            messagebox.showwarning("Erreur", "Ce pseudonyme est déjà utilisé par un autre joueur.")
+            afficher_message_bloquant("Erreur", "Ce pseudonyme est déjà utilisé par un autre joueur.")
             return
         pseudos.append(pseudo)
         listbox_pseudos.insert(tk.END, pseudo)
         pseudo_entry.delete(0, tk.END)
     else:
-        messagebox.showwarning("Erreur", "Veuillez entrer un pseudo.")
+        afficher_message_bloquant("Erreur", "Veuillez entrer un pseudo.")
 
 # Fonction pour supprimer un pseudo
 def supprimer_pseudo():
@@ -35,7 +47,7 @@ def supprimer_pseudo():
         listbox_pseudos.delete(index)
         pseudos.pop(index)
     else:
-        messagebox.showwarning("Erreur", "Veuillez sélectionner un pseudo à supprimer.")
+        afficher_message_bloquant("Erreur", "Veuillez sélectionner un pseudo à supprimer.")
 
 # Fonction pour afficher la fenêtre de jeu
 def ouvrir_fenetre_jeu():
