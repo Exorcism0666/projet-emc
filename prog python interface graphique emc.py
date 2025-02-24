@@ -14,13 +14,20 @@ def ouvrir_lien_mit():
 def afficher_message_bloquant(titre, message):
     popup = tk.Toplevel(fenetre)
     popup.title(titre)
-    popup.geometry("300x150")
     popup.configure(bg="#1c1c1c")
     popup.resizable(False, False)
     popup.grab_set()
 
-    ttk.Label(popup, text=message, font=("Arial", 12), background="#1c1c1c", foreground="white").pack(pady=20)
+    label = ttk.Label(popup, text=message, font=("Arial", 12), background="#1c1c1c", foreground="white", wraplength=280)
+    label.pack(pady=20, padx=20)
     ttk.Button(popup, text="OK", command=popup.destroy).pack()
+
+    popup.update_idletasks()
+    largeur = popup.winfo_width()
+    hauteur = popup.winfo_height()
+    x = (popup.winfo_screenwidth() // 2) - (largeur // 2)
+    y = (popup.winfo_screenheight() // 2) - (hauteur // 2)
+    popup.geometry(f"{largeur}x{hauteur}+{x}+{y}")
 
 # Fonction pour ajouter un pseudo
 def ajouter_pseudo(pseudo_entry, listbox_pseudos):
@@ -72,7 +79,6 @@ def ouvrir_fenetre_jeu():
     ttk.Label(fenetre_jeu, text="Inscriptions des joueurs!", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white").pack(pady=10)
     ttk.Label(fenetre_jeu, text="Limite de 4 joueurs !", font=("Arial", 10, "bold italic"), background="#1c1c1c", foreground="white").pack(pady=20)
 
-    # Fonction de validation pour limiter les caractères à 16
     def valider_texte(P):
         return len(P) <= 16
 
@@ -102,7 +108,6 @@ sv.set_theme("dark")
 style = ttk.Style()
 style.configure("Large.Accent.TButton", padding=(20, 10), font=("Arial", 14))
 
-# Effet de fondu pour le titre
 def effet_fondu(opacity=0):
     if opacity <= 1.0:
         couleur = f"#{int(opacity * 255):02x}{int(opacity * 255):02x}{int(opacity * 255):02x}"
