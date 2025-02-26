@@ -61,10 +61,18 @@ def ouvrir_fenetre_jeu():
     fenetre.withdraw()
     fenetre_jeu = tk.Toplevel(fenetre)
     fenetre_jeu.title("Inscriptions des joueurs")
-    fenetre_jeu.geometry("400x450")
+    fenetre_jeu.geometry("400x550")
     fenetre_jeu.configure(bg="#1c1c1c")
     fenetre_jeu.resizable(False, False)
     sv.set_theme("dark")
+
+    # Configuration du style vert
+    style = ttk.Style()
+    style.configure("Green.TButton",
+                    background="#4CAF50",  # Couleur verte
+                    foreground="white",   # Texte blanc
+                    font=("Arial", 14),  # Police
+                    padding=(20, 10))    # Padding
 
     def retour_accueil():
         fenetre_jeu.destroy()
@@ -80,7 +88,8 @@ def ouvrir_fenetre_jeu():
 
     ttk.Label(fenetre_jeu, text="Inscriptions des joueurs!", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white").pack(pady=10)
     ttk.Label(fenetre_jeu, text="Limite de 4 joueurs !", font=("Arial", 10, "bold italic"), background="#1c1c1c", foreground="white").pack(pady=20)
- # Fonction de validation pour limiter les caractères à 16
+
+    # Fonction de validation pour limiter les caractères à 16
     def valider_texte(P):
         return len(P) <= 16
 
@@ -96,8 +105,18 @@ def ouvrir_fenetre_jeu():
 
     ttk.Button(fenetre_jeu, text="Ajouter un pseudo", style="Accent.TButton", command=lambda: ajouter_pseudo(pseudo_entry, listbox_pseudos)).pack(pady=10)
     ttk.Button(fenetre_jeu, text="Supprimer un pseudo", style="Accent.TButton", command=supprimer_pseudo).pack(pady=10)
+
+    # Bouton "Commencer la partie"
+    btn_commencer = ttk.Button(
+        fenetre_jeu,
+        text="Commencer la partie",
+        style="Green.TButton"
+    )
+    btn_commencer.pack(pady=10)
+
+    # Bouton "Retour à l'accueil"
     btn_retour = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=retour_accueil)
-    btn_retour.place(relx=0.0, rely=1.0, anchor="sw", x=10, y=-10)
+    btn_retour.pack(pady=10)
 
 # Création de la fenêtre principale
 fenetre = tk.Tk()
@@ -109,6 +128,7 @@ sv.set_theme("dark")
 
 style = ttk.Style()
 style.configure("Large.Accent.TButton", padding=(20, 10), font=("Arial", 14))
+
 # Effet de fondu pour le titre
 def effet_fondu(opacity=0):
     if opacity <= 1.0:
