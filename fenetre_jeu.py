@@ -31,6 +31,101 @@ def supprimer_pseudo(listbox_pseudos):
     else:
         afficher_message_bloquant("Erreur", "Veuillez sélectionner un pseudo à supprimer.")
 
+def afficher_reglement(fenetre_jeu):
+    reglement_window = tk.Toplevel(fenetre_jeu)
+    reglement_window.title("Règlement du jeu")
+    reglement_window.geometry("600x400")
+    reglement_window.configure(bg="#1c1c1c")
+    reglement_window.resizable(False, False)
+
+    pages = [
+        {
+            "titre": "Objectif du jeu 🕮",
+            "contenu": "Le but du jeu va être de répondre correctement au question posée par le programme, sachant qu'il y a un compte à rebours."
+        },
+        {
+            "titre": "Déroulement ⏳",
+            "contenu": "Chaque joueur à tour de rôle, aura une question avec 4 choix différent, l'une d'entre sera bonne et 3/4 seront fausses, si le joueur arrive à trouver la bonne réponse, alors il pourra alors lancer le dé et savoir de combien de case il avance"
+        },
+        {
+            "titre": "Règles spéciales ✨",
+            "contenu": "1. "
+        }
+    ]
+
+    current_page = tk.IntVar(value=0)
+
+    # Frame principale
+    main_frame = ttk.Frame(reglement_window)
+    main_frame.pack(expand=True, fill="both", padx=20, pady=20)
+
+    # Titre
+    lbl_titre = ttk.Label(
+        main_frame,
+        font=("Arial", 16, "bold"),
+        foreground="white",
+        background="#1c1c1c"
+    )
+    lbl_titre.pack(pady=10)
+
+    # Contenu
+    lbl_contenu = ttk.Label(
+        main_frame,
+        font=("Arial", 12),
+        wraplength=500,
+        foreground="white",
+        background="#1c1c1c",
+        justify="center"
+    )
+    lbl_contenu.pack(pady=20, fill="both", expand=True)
+
+    # Contrôles de navigation
+    controls_frame = ttk.Frame(main_frame)
+    controls_frame.pack(pady=20)
+
+    btn_prev = ttk.Button(
+        controls_frame,
+        text="← Précédent",
+        style="Accent.TButton",
+        command=lambda: current_page.set(current_page.get() - 1)
+    )
+    btn_prev.pack(side="left", padx=10)
+
+    btn_next = ttk.Button(
+        controls_frame,
+        text="Suivant →",
+        style="Accent.TButton",
+        command=lambda: current_page.set(current_page.get() + 1)
+    )
+    btn_next.pack(side="right", padx=10)
+
+    def update_page(*args):
+        page_index = current_page.get()
+        btn_prev.state(["!disabled" if page_index > 0 else "disabled"])
+
+        if page_index >= len(pages) - 1:
+            btn_next.config(text="Commencer !")
+            btn_next.config(command=reglement_window.destroy)
+        else:
+            btn_next.config(text="Suivant →")
+            btn_next.config(command=lambda: current_page.set(current_page.get() + 1))
+
+        lbl_titre.config(text=pages[page_index]["titre"])
+        lbl_contenu.config(text=pages[page_index]["contenu"])
+
+    current_page.trace_add("write", update_page)
+    update_page()
+
+    # Centrer la fenêtre
+    reglement_window.update_idletasks()
+    width = reglement_window.winfo_width()
+    height = reglement_window.winfo_height()
+    x = (reglement_window.winfo_screenwidth() // 2) - (width // 2)
+    y = (reglement_window.winfo_screenheight() // 2) - (height // 2)
+    reglement_window.geometry(f"+{x}+{y}")
+
+    reglement_window.grab_set()
+
 def ouvrir_fenetre_jeu(fenetre_principale):
     fenetre_principale.withdraw()
     fenetre_jeu = tk.Toplevel(fenetre_principale)
@@ -81,10 +176,19 @@ def ouvrir_fenetre_jeu(fenetre_principale):
     btn_commencer = ttk.Button(
         fenetre_jeu,
         text="Commencer la partie",
-        style="Green.TButton"
+        style="Green.TButton",
+        command=lambda: afficher_reglement(fenetre_jeu) if pseudos else afficher_message_bloquant("Erreur", "Ajoutez au moins un joueur !")
     )
     btn_commencer.pack(pady=10)
 
     # Bouton "Retour à l'accueil"
     btn_retour = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=retour_accueil)
     btn_retour.pack(pady=10)
+
+    # Centrer la fenêtre
+    fenetre_jeu.update_idletasks()
+    width = fenetre_jeu.winfo_width()
+    height = fenetre_jeu.winfo_height()
+    x = (fenetre_jeu.winfo_screenwidth() // 2) - (width // 2)
+    y = (fenetre_jeu.winfo_screenheight() // 2) - (height // 2)
+    fenetre_jeu.geometry(f"+{x}+{y}")
