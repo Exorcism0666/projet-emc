@@ -28,7 +28,7 @@ jobs:
         pyinstaller --onefile main.py  # Adaptez cette ligne selon votre structure
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.6.2
       with:
         name: executable
         path: dist/main.exe  # Adaptez selon le nom de votre exécutable
