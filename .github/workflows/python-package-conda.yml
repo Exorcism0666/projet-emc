@@ -45,7 +45,7 @@ jobs:
 
     - name: Create Release
       id: create_release
-      uses: softprops/action-gh-release@v2.2.1
+      uses: actions/create-release@v1.1.4
       with:
         tag_name: v0.0.${{ github.run_number }}
         name: Release v0.0.${{ github.run_number }}
@@ -53,3 +53,5 @@ jobs:
         draft: false
         prerelease: false
         files: dist/main.exe  # Adaptez selon le nom de votre exécutable
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
