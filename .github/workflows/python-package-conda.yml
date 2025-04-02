@@ -6,9 +6,10 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
     
-    - name: Set up Python
+    - name: Set up Python 3.8
       uses: actions/setup-python@v4
       with:
         python-version: '3.8'
@@ -21,7 +22,14 @@ jobs:
         
     - name: Build executable
       run: |
-        pyinstaller --onefile --add-data "constants.py;." --add-data "feneire_jeu.py;." --add-data "styles.py;." --add-data "utils.py;." main.py
+        # Commande PyInstaller avec tous les fichiers nécessaires
+        pyinstaller --onefile ^
+          --add-data "constants.py;." ^
+          --add-data "feneire_jeu.py;." ^
+          --add-data "feneire_question.py;." ^
+          --add-data "styles.py;." ^
+          --add-data "utils.py;." ^
+          main.py
         
     - name: Upload artifact
       uses: actions/upload-artifact@v3
