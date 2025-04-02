@@ -1,3 +1,2 @@
-tkinter
-webbrowser
+python3-tk
 sv_ttk
