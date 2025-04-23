@@ -11,6 +11,7 @@ def ajouter_pseudo(pseudo_entry, listbox_pseudos):
         afficher_message_bloquant("Erreur", "Vous ne pouvez pas ajouter plus de 4 pseudos.")
         return
     pseudo = pseudo_entry.get()
+
     if pseudo:
         pseudo = pseudo.center(20)  # Formatage pour 20 caractères centrés
         if pseudo in pseudos:
@@ -31,42 +32,49 @@ def supprimer_pseudo(listbox_pseudos):
     else:
         afficher_message_bloquant("Erreur", "Veuillez sélectionner un pseudo à supprimer.")
 
+import tkinter as tk
+from tkinter import ttk
+import sv_ttk
+
 def afficher_reglement(fenetre_jeu):
     reglement_window = tk.Toplevel(fenetre_jeu)
     reglement_window.title("Règlement du jeu")
     reglement_window.geometry("600x400")
     reglement_window.configure(bg="#1c1c1c")
     reglement_window.resizable(False, False)
+    sv_ttk.set_theme("dark")
 
     pages = [
         {
             "titre": "Objectif du jeu 🕮",
-            "contenu": "Le but du jeu va être de répondre correctement au question posée par le programme, sachant qu'il y a un compte à rebours."
+            "contenu": "Le but du jeu va être de répondre correctement aux questions posées par le programme, sachant qu'il y a un compte à rebours."
         },
         {
             "titre": "Déroulement ⏳",
-            "contenu": "Chaque joueur à tour de rôle, aura une question avec 4 choix différent, l'une d'entre sera bonne et 3/4 seront fausses, si le joueur arrive à trouver la bonne réponse, alors il pourra alors lancer le dé et savoir de combien de case il avance"
+            "contenu": "Chaque joueur, à tour de rôle, aura une question avec 4 choix différents. L'une d'entre elles sera bonne, les autres fausses. Si le joueur trouve la bonne réponse, il pourra alors lancer le dé et avancer."
         },
         {
             "titre": "Règles spéciales ✨",
-            "contenu": "1. "
+            "contenu": "1. À définir selon les variantes du jeu.\n2. Par exemple : si un joueur répond 3 bonnes réponses d'affilée, il avance de 2 cases supplémentaires."
         }
     ]
 
     current_page = tk.IntVar(value=0)
 
-    # Frame principale
+    # Frame principale centrée
     main_frame = ttk.Frame(reglement_window)
-    main_frame.pack(expand=True, fill="both", padx=20, pady=20)
+    main_frame.place(relx=0.5, rely=0.5, anchor="center")
 
     # Titre
     lbl_titre = ttk.Label(
         main_frame,
         font=("Arial", 16, "bold"),
         foreground="white",
-        background="#1c1c1c"
+        background="#1c1c1c",
+        justify="center",
+        wraplength=500
     )
-    lbl_titre.pack(pady=10)
+    lbl_titre.pack(pady=(0, 10))
 
     # Contenu
     lbl_contenu = ttk.Label(
@@ -77,27 +85,45 @@ def afficher_reglement(fenetre_jeu):
         background="#1c1c1c",
         justify="center"
     )
-    lbl_contenu.pack(pady=20, fill="both", expand=True)
+    lbl_contenu.pack(pady=(0, 20))
 
     # Contrôles de navigation
     controls_frame = ttk.Frame(main_frame)
-    controls_frame.pack(pady=20)
+    controls_frame.pack()
 
     btn_prev = ttk.Button(
         controls_frame,
         text="← Précédent",
-        style="Accent.TButton",
-        command=lambda: current_page.set(current_page.get() - 1)
+        command=lambda: changer_page(-1)
     )
     btn_prev.pack(side="left", padx=10)
 
     btn_next = ttk.Button(
         controls_frame,
         text="Suivant →",
-        style="Accent.TButton",
-        command=lambda: current_page.set(current_page.get() + 1)
+        command=lambda: changer_page(1)
     )
     btn_next.pack(side="right", padx=10)
+
+    # Met à jour l'affichage de la page
+    def afficher_page():
+        index = current_page.get()
+        page = pages[index]
+        lbl_titre.config(text=page["titre"])
+        lbl_contenu.config(text=page["contenu"])
+
+        # Gère l'état des boutons
+        btn_prev["state"] = "normal" if index > 0 else "disabled"
+        btn_next["state"] = "normal" if index < len(pages) - 1 else "disabled"
+
+    # Change la page (avance ou recule)
+    def changer_page(delta):
+        new_index = current_page.get() + delta
+        if 0 <= new_index < len(pages):
+            current_page.set(new_index)
+            afficher_page()
+
+    afficher_page()
 
     def update_page(*args):
         page_index = current_page.get()
@@ -164,6 +190,7 @@ def ouvrir_fenetre_jeu(fenetre_principale):
 
     pseudo_entry = ttk.Entry(fenetre_jeu, font=("Arial", 16), validate="key", validatecommand=(validate_command, "%P"), justify="center")
     pseudo_entry.pack(pady=3)
+    pseudo_entry.bind("<Return>", lambda event: ajouter_pseudo(pseudo_entry, listbox_pseudos))
     ttk.Label(fenetre_jeu, text="(limite de 16 caractères)", font=("Arial", 10, "italic"), background="#1c1c1c", foreground="white").pack(pady=10)
 
     listbox_pseudos = tk.Listbox(fenetre_jeu, font=("Courier", 14), height=4, width=20, justify="center")
