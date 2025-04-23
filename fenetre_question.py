@@ -64,7 +64,9 @@ def afficher_question():
                  font=("Arial", 12), bg="#1c1c1c", fg="white").pack()
         tk.Label(frame_reponses, text="Vous pouvez fermer la fenêtre.",
                  font=("Arial", 10), bg="#1c1c1c", fg="gray").pack()
-
+# Nouveau bouton "Terminer la partie"
+        tk.Button(frame_reponses, text="Terminer la partie", font=("Arial", 11),
+                  command=fenetre.destroy).pack(pady=10)
 # Vérification de la réponse
 def verifier_reponse(reponse):
     global score, index_question
