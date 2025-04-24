@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import sv_ttk as sv
 from utils import afficher_message_bloquant
+from fenetre_question import lancer_fenetre_question
 
 # Liste pour stocker les pseudos
 pseudos = []
@@ -32,17 +33,13 @@ def supprimer_pseudo(listbox_pseudos):
     else:
         afficher_message_bloquant("Erreur", "Veuillez sélectionner un pseudo à supprimer.")
 
-import tkinter as tk
-from tkinter import ttk
-import sv_ttk
-
-def afficher_reglement(fenetre_jeu):
+def afficher_reglement(fenetre_jeu, on_commencer=None):
     reglement_window = tk.Toplevel(fenetre_jeu)
     reglement_window.title("Règlement du jeu")
     reglement_window.geometry("600x400")
     reglement_window.configure(bg="#1c1c1c")
     reglement_window.resizable(False, False)
-    sv_ttk.set_theme("dark")
+    sv.set_theme("dark")
 
     pages = [
         {
@@ -130,11 +127,12 @@ def afficher_reglement(fenetre_jeu):
         btn_prev.state(["!disabled" if page_index > 0 else "disabled"])
 
         if page_index >= len(pages) - 1:
-            btn_next.config(text="Commencer !")
-            btn_next.config(command=reglement_window.destroy)
+         btn_next.config(text="Commencer !")
+         btn_next.config(command=lambda: (reglement_window.destroy(), on_commencer() if on_commencer else None))
         else:
-            btn_next.config(text="Suivant →")
-            btn_next.config(command=lambda: current_page.set(current_page.get() + 1))
+         btn_next.config(text="Suivant →")
+         btn_next.config(command=lambda: current_page.set(current_page.get() + 1))
+
 
         lbl_titre.config(text=pages[page_index]["titre"])
         lbl_contenu.config(text=pages[page_index]["contenu"])
@@ -201,11 +199,11 @@ def ouvrir_fenetre_jeu(fenetre_principale):
 
     # Bouton "Commencer la partie"
     btn_commencer = ttk.Button(
-        fenetre_jeu,
-        text="Commencer la partie",
-        style="Green.TButton",
-        command=lambda: afficher_reglement(fenetre_jeu) if pseudos else afficher_message_bloquant("Erreur", "Ajoutez au moins un joueur !")
-    )
+    fenetre_jeu,
+    text="Commencer la partie",
+    style="Green.TButton",
+    command=lambda: afficher_reglement(fenetre_jeu, on_commencer=lancer_fenetre_question) if pseudos else afficher_message_bloquant("Erreur", "Ajoutez au moins un joueur !")
+)
     btn_commencer.pack(pady=10)
 
     # Bouton "Retour à l'accueil"
