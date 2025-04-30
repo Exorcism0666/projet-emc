@@ -128,7 +128,7 @@ def afficher_reglement(fenetre_jeu, on_commencer=None):
 
         if page_index >= len(pages) - 1:
          btn_next.config(text="Commencer !")
-         btn_next.config(command=lambda: (reglement_window.destroy(), on_commencer() if on_commencer else None))
+         btn_next.config(command=lambda: (reglement_window.destroy(), on_commencer(pseudos) if on_commencer else None))
         else:
          btn_next.config(text="Suivant →")
          btn_next.config(command=lambda: current_page.set(current_page.get() + 1))
