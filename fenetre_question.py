@@ -62,12 +62,25 @@ def lancer_fenetre_question(pseudos):
     frame_bas = tk.Frame(main_frame, bg="#1c1c1c")
     frame_bas.pack(side="bottom", fill="x", padx=10, pady=10)
 
+    def afficher_intro_question():
+        nonlocal joueur_actuel_index
+
+        for widget in frame_reponses.winfo_children():
+            widget.destroy()
+
+        joueur = joueurs[joueur_actuel_index].strip()
+        question_label.config(text=f"{joueur} : Appuie sur le dé avant de répondre à la question.")
+
+        bouton_de = tk.Button(frame_reponses, text="🎲 Lancer le dé", font=("Arial", 12), command=afficher_question)
+        bouton_de.pack(pady=20)
+
     def afficher_question():
         nonlocal index_question, joueur_actuel_index
+
         if index_question < len(questions):
             joueur = joueurs[joueur_actuel_index].strip()
             q = questions[index_question]
-            question_label.config(text=f"{joueur}, à vous de jouer !\n\n{q['q']}")
+            question_label.config(text=f"{joueur} : {q['q']}")
 
             for widget in frame_reponses.winfo_children():
                 widget.destroy()
@@ -83,10 +96,25 @@ def lancer_fenetre_question(pseudos):
         questions_posees[joueur] += 1
         if reponse == questions[index_question]["c"]:
             scores[joueur] += 1
+        joueur_actuel_index = (joueur_actuel_index + 1) % nb_joueurs
+        index_question += 1
+        afficher_intro_question()  # Affiche l'annonce du prochain joueur
+
+    # Commencer par la page d’introduction au lieu de la question directe :
+    afficher_intro_question()
+
+
+    def verifier_reponse(reponse):
+        nonlocal index_question, joueur_actuel_index
+        joueur = joueurs[joueur_actuel_index].strip()
+        questions_posees[joueur] += 1
+        if reponse == questions[index_question]["c"]:
+            scores[joueur] += 1
             score_vars[joueur].set(scores[joueur])
         joueur_actuel_index = (joueur_actuel_index + 1) % nb_joueurs
         index_question += 1
-        afficher_question()
+        afficher_intro_question()
+
 
     def afficher_classement():
         question_label.config(text="Le quiz est terminé ! 🎉")
@@ -129,5 +157,6 @@ def lancer_fenetre_question(pseudos):
         tk.Button(bouton_frame, text="Revenir au jeu", command=confirmation.destroy).pack(side="left", padx=10)
         tk.Button(bouton_frame, text="Abandonner", command=confirmer_abandon).pack(side="left", padx=10)
 
-    tk.Button(frame_bas, text="Abandonner la partie", command=abandonner_partie).pack(side="right")
-    afficher_question()
+    tk.Button(frame_bas, text="Abandonner la parties", command=abandonner_partie).pack(side="right")
+    afficher_intro_question()
+
