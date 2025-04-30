@@ -87,7 +87,7 @@ lien_mit.bind("<Button-1>", lambda e: ouvrir_lien_mit())
 # Mention de copyright
 mention_copyright = ttk.Label(
     fenetre,
-    text="Copyright © Doisne Lilou, Dubus Yanis, Ryan Cordier, Alban Bloise",
+    text="Copyright © Doisne Lilou, Dubus Yanis, Cordier Ryan, Bloise Alban",
     font=("Arial", 8),
     background=BACKGROUND_COLOR,
     foreground=FOREGROUND_COLOR
