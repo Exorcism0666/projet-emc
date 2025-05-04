@@ -10,7 +10,6 @@ def afficher_message_bloquant(titre, message):
     popup.title(titre)
     popup.configure(bg="#1c1c1c")
     popup.resizable(False, False)
-    popup.grab_set()
 
     label = ttk.Label(popup, text=message, font=("Arial", 12), background="#1c1c1c", foreground="white", wraplength=280)
     label.pack(pady=20, padx=20)
@@ -22,6 +21,10 @@ def afficher_message_bloquant(titre, message):
     x = (popup.winfo_screenwidth() // 2) - (largeur // 2)
     y = (popup.winfo_screenheight() // 2) - (hauteur // 2)
     popup.geometry(f"{largeur}x{hauteur}+{x}+{y}")
+
+    popup.grab_set()           # Empêche toute interaction avec les autres fenêtres
+    popup.focus_force()        # Donne le focus à la fenêtre popup
+    popup.wait_window()        # Attend que le popup soit fermé avant de poursuivre
 
 def effet_fondu(titre, opacity=0):
     if opacity <= 1.0:
