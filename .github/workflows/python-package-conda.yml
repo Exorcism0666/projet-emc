@@ -69,6 +69,6 @@ jobs:
         id: release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: dist/${{ env.script }}.exe
+          artifacts: dist/main.exe
           tag: ${{ steps.get_tag.outputs.tag }}
           token: ${{ secrets.GITHUB_TOKEN }}
