@@ -19,7 +19,10 @@ def ajouter_pseudo(pseudo_entry, listbox_pseudos):
             afficher_message_bloquant("Erreur", "Ce pseudonyme est déjà utilisé par un autre joueur.")
             return
         pseudos.append(pseudo)
+        index = len(pseudos) - 1
+        colors = ["#FF5555", "#5555FF", "#FFD700", "#55FF55"]  # Rouge, Bleu, Jaune, Vert
         listbox_pseudos.insert(tk.END, pseudo)
+        listbox_pseudos.itemconfig(index, fg=colors[index])
         pseudo_entry.delete(0, tk.END)
     else:
         afficher_message_bloquant("Erreur", "Veuillez entrer un pseudo.")
@@ -97,8 +100,7 @@ def afficher_reglement(fenetre_jeu, on_commencer=None):
 
     btn_next = ttk.Button(
         controls_frame,
-        text="Suivant →",
-        command=lambda: changer_page(1)
+        text="Suivant →"
     )
     btn_next.pack(side="right", padx=10)
 
@@ -109,11 +111,9 @@ def afficher_reglement(fenetre_jeu, on_commencer=None):
         lbl_titre.config(text=page["titre"])
         lbl_contenu.config(text=page["contenu"])
 
-        # Gère l'état des boutons
         btn_prev["state"] = "normal" if index > 0 else "disabled"
         btn_next["state"] = "normal" if index < len(pages) - 1 else "disabled"
 
-    # Change la page (avance ou recule)
     def changer_page(delta):
         new_index = current_page.get() + delta
         if 0 <= new_index < len(pages):
@@ -127,12 +127,15 @@ def afficher_reglement(fenetre_jeu, on_commencer=None):
         btn_prev.state(["!disabled" if page_index > 0 else "disabled"])
 
         if page_index >= len(pages) - 1:
-         btn_next.config(text="Commencer !", style="Accent.TButton")
-         btn_next.config(command=lambda: (reglement_window.destroy(), on_commencer(pseudos) if on_commencer else None))
+            btn_next.config(text="Commencer !", style="Accent.TButton")
+            btn_next.config(command=lambda: (
+                reglement_window.destroy(),
+                fenetre_jeu.destroy(),
+                on_commencer(pseudos) if on_commencer else None
+            ))
         else:
-         btn_next.config(text="Suivant →")
-         btn_next.config(command=lambda: current_page.set(current_page.get() + 1))
-
+            btn_next.config(text="Suivant →")
+            btn_next.config(command=lambda: current_page.set(current_page.get() + 1))
 
         lbl_titre.config(text=pages[page_index]["titre"])
         lbl_contenu.config(text=pages[page_index]["contenu"])
@@ -172,7 +175,6 @@ def ouvrir_fenetre_jeu(fenetre_principale):
     ttk.Label(fenetre_jeu, text="Inscriptions des joueurs!", font=("Arial", 18, "bold"), background="#1c1c1c", foreground="white").pack(pady=10)
     ttk.Label(fenetre_jeu, text="Limite de 4 joueurs !", font=("Arial", 10, "bold italic"), background="#1c1c1c", foreground="white").pack(pady=20)
 
-    # Fonction de validation pour limiter les caractères à 16
     def valider_texte(P):
         return len(P) <= 16
 
@@ -189,20 +191,17 @@ def ouvrir_fenetre_jeu(fenetre_principale):
     ttk.Button(fenetre_jeu, text="Ajouter un pseudo", style="Accent.TButton", command=lambda: ajouter_pseudo(pseudo_entry, listbox_pseudos)).pack(pady=10)
     ttk.Button(fenetre_jeu, text="Supprimer un pseudo", style="Accent.TButton", command=lambda: supprimer_pseudo(listbox_pseudos)).pack(pady=10)
 
-    # Bouton "Commencer la partie"
     btn_commencer = ttk.Button(
-    fenetre_jeu,
-    text="Commencer la partie",
-    style="Large.TButton",
-    command=lambda: afficher_reglement(fenetre_jeu, on_commencer=lancer_fenetre_question) if pseudos else afficher_message_bloquant("Erreur", "Ajoutez au moins un joueur !")
-)
+        fenetre_jeu,
+        text="Commencer la partie",
+        style="Large.TButton",
+        command=lambda: afficher_reglement(fenetre_jeu, on_commencer=lancer_fenetre_question) if pseudos else afficher_message_bloquant("Erreur", "Ajoutez au moins un joueur !")
+    )
     btn_commencer.pack(pady=10)
 
-    # Bouton "Retour à l'accueil"
     btn_retour = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=retour_accueil)
     btn_retour.pack(pady=10)
 
-    # Centrer la fenêtre
     fenetre_jeu.update_idletasks()
     width = fenetre_jeu.winfo_width()
     height = fenetre_jeu.winfo_height()
