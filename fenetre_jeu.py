@@ -127,7 +127,7 @@ def afficher_reglement(fenetre_jeu, on_commencer=None):
         btn_prev.state(["!disabled" if page_index > 0 else "disabled"])
 
         if page_index >= len(pages) - 1:
-         btn_next.config(text="Commencer !")
+         btn_next.config(text="Commencer !", style="Accent.TButton")
          btn_next.config(command=lambda: (reglement_window.destroy(), on_commencer(pseudos) if on_commencer else None))
         else:
          btn_next.config(text="Suivant →")
@@ -158,15 +158,7 @@ def ouvrir_fenetre_jeu(fenetre_principale):
     fenetre_jeu.configure(bg="#1c1c1c")
     fenetre_jeu.resizable(False, False)
     sv.set_theme("dark")
-
-    # Configuration du style vert
-    style = ttk.Style()
-    style.configure("Green.TButton",
-                    background="#4CAF50",  # Couleur verte
-                    foreground="white",   # Texte blanc
-                    font=("Arial", 14),  # Police
-                    padding=(20, 10))    # Padding
-
+    
     def retour_accueil():
         fenetre_jeu.destroy()
         fenetre_principale.deiconify()
@@ -201,7 +193,7 @@ def ouvrir_fenetre_jeu(fenetre_principale):
     btn_commencer = ttk.Button(
     fenetre_jeu,
     text="Commencer la partie",
-    style="Green.TButton",
+    style="Large.TButton",
     command=lambda: afficher_reglement(fenetre_jeu, on_commencer=lancer_fenetre_question) if pseudos else afficher_message_bloquant("Erreur", "Ajoutez au moins un joueur !")
 )
     btn_commencer.pack(pady=10)

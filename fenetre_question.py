@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import sv_ttk as sv
 from tkinter import messagebox
+import random
 
 
 def lancer_fenetre_question(pseudos):
@@ -33,6 +34,8 @@ def lancer_fenetre_question(pseudos):
         {"q": "Peintre de la Joconde ?", "r": ["Van Gogh", "Monet", "Léonard de Vinci", "Picasso"], "c": "Léonard de Vinci"},
         {"q": "Symbole chimique de l'eau ?", "r": ["O2", "H2O", "CO2", "NaCl"], "c": "H2O"},
     ]
+    # Permet d'avoir les questions pas dans le même ordre que prévue
+    random.shuffle(questions)
 
     # Scoreboard à gauche
     frame_scoreboard = tk.Frame(fenetre, bg="#2b2b2b", width=160)
@@ -71,7 +74,7 @@ def lancer_fenetre_question(pseudos):
         joueur = joueurs[joueur_actuel_index].strip()
         question_label.config(text=f"{joueur} : Appuie sur le dé avant de répondre à la question.")
 
-        bouton_de = tk.Button(frame_reponses, text="🎲 Lancer le dé", font=("Arial", 12), command=afficher_question)
+        bouton_de = ttk.Button(frame_reponses, text="🎲 Lancer le dé", command=afficher_question, style="Accent.TButton")
         bouton_de.pack(pady=20)
 
     def afficher_question():
@@ -86,7 +89,7 @@ def lancer_fenetre_question(pseudos):
                 widget.destroy()
 
             for r in q["r"]:
-                tk.Button(frame_reponses, text=r, font=("Arial", 12), command=lambda rep=r: verifier_reponse(rep)).pack(pady=5, fill="x")
+                ttk.Button(frame_reponses, style="Accent.TButton", text=r, command=lambda rep=r: verifier_reponse(rep)).pack(pady=5, fill="x")
         else:
             afficher_classement()
 
@@ -135,7 +138,7 @@ def lancer_fenetre_question(pseudos):
             tk.Label(frame_reponses, text=f"{nom} : {pts}/{total_q} ({pct:.1f}%)", font=("Arial", 12), bg="#1c1c1c", fg="white").pack()
 
         tk.Label(frame_reponses, text="Vous pouvez fermer la fenêtre.", font=("Arial", 10), bg="#1c1c1c", fg="gray").pack()
-        tk.Button(frame_reponses, text="Terminer la partie", font=("Arial", 11), command=fenetre.destroy).pack(pady=10)
+        ttk.Button(frame_reponses, text="Terminer la partie", style="Accent.TButton", command=fenetre.destroy).pack(pady=10)
 
     def abandonner_partie():
         def confirmer_abandon():
@@ -154,9 +157,9 @@ def lancer_fenetre_question(pseudos):
         bouton_frame = tk.Frame(confirmation, bg="#1c1c1c")
         bouton_frame.pack(pady=10)
 
-        tk.Button(bouton_frame, text="Revenir au jeu", command=confirmation.destroy).pack(side="left", padx=10)
-        tk.Button(bouton_frame, text="Abandonner", command=confirmer_abandon).pack(side="left", padx=10)
+        ttk.Button(bouton_frame, text="Revenir au jeu", command=confirmation.destroy, style="Accent.TButton").pack(side="left", padx=10)
+        ttk.Button(bouton_frame, text="Abandonner", command=confirmer_abandon, style="TButton").pack(side="left", padx=10)
 
-    tk.Button(frame_bas, text="Abandonner la parties", command=abandonner_partie).pack(side="right")
+    ttk.Button(frame_bas, text="Abandonner la partie", command=abandonner_partie, style="TButton").pack(side="right")
     afficher_intro_question()
 
