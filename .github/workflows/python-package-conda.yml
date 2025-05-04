@@ -11,7 +11,7 @@ jobs:
       script: script  # Ton nom de script
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Nécessaire pour avoir l'historique des tags
 
@@ -46,7 +46,7 @@ jobs:
         run: exit 1
 
       - name: Set Up Python 3.10
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5.6.0
         with:
           python-version: 3.10
 
@@ -64,7 +64,7 @@ jobs:
 
       - name: Publish a New Release
         id: release
-        uses: ncipollo/release-action@v1.16.0
+        uses: ncipollo/release-action@v1
         with:
           artifacts: dist/${{ env.script }}.exe
           tag: ${{ steps.get_tag.outputs.tag }}
