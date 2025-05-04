@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import sv_ttk as sv
 from tkinter import messagebox
+import random
 
 
 def lancer_fenetre_question(pseudos):
@@ -28,58 +29,13 @@ def lancer_fenetre_question(pseudos):
 
     # Questions
     questions = [
-        {
-        "q": "Qu’est-ce qu’une démocratie ? (Niveau 4e)", 
-        "r": ["Un système politique où une seule personne détient tous les pouvoirs", "Un système où le pouvoir appartient à une famille royale", "Un système où les citoyens participent aux décisions politiques", "Un système où personne ne vote"], 
-        "c": "Un système où les citoyens participent aux décisions politiques"
-        },
-        {
-        "q": "Quel pays est souvent considéré comme le berceau de la démocratie ? (Niveau 4e)",
-        "r": ["La France", "L’Italie", "La Grèce", "Les États-Unis"],
-        "c": "La Grèce"
-        },
-        {
-        "q": "Quelle est une des caractéristiques principales d’un régime démocratique ? (Niveau 3e)",
-        "r": ["La censure de la presse", "L’arrestation des opposants politiques", "L’élection régulière des représentants", "L’obligation de voter pour un seul parti"],
-        "c": "L’élection régulière des représentants"
-        },
-        {
-        "q": "En France, qui peut voter aux élections présidentielles ? (Niveau 3e)",
-        "r": ["Toute personne vivant en France", "Tout citoyen français majeur", "Uniquement les hommes", "Tous les Européens majeurs"],
-        "c": "Tout citoyen français majeur"
-        },
-        {
-        "q": "Quelle institution française veille au respect de la Constitution ? (Niveau 2de)",
-        "r": ["Le Conseil économique, social et environnemental", "L’Assemblée nationale", "Le Conseil constitutionnel", "Le Sénat"],
-        "c": "Le Conseil constitutionnel"
-        },
-        {
-        "q": "Quel est le rôle principal du suffrage universel ? (Niveau 2de)",
-        "r": ["Permettre aux citoyens de rédiger des lois", "Permettre au président de nommer les ministres", "Permettre aux citoyens d’élire leurs représentants", "Supprimer les droits des minorités"],
-        "c": "Permettre aux citoyens d’élire leurs représentants"
-        },
-        {
-        "q": "Que garantit la séparation des pouvoirs dans une démocratie ? (Niveau 1re)",
-        "r": ["La concentration du pouvoir dans un seul organe", "L’indépendance entre les fonctions exécutives, législatives et judiciaires", "L’armée au pouvoir", "Le président qui cumule tous les pouvoirs"],
-        "c": "L’indépendance entre les fonctions exécutives, législatives et judiciaires"
-        },
-        {
-        "q": "Quel philosophe a développé l’idée de séparation des pouvoirs ? (Niveau 1re)",
-        "r": ["Platon", "Rousseau", "Montesquieu", "Machiavel"],
-        "c": "Montesquieu"
-        },
-        {
-        "q": "Quelle affirmation correspond à une démocratie libérale ? (Niveau Terminale)",
-        "r": ["Elle respecte les droits fondamentaux et organise des élections libres", "Elle interdit les partis politiques", "Elle impose une seule idéologie d'État", "Elle supprime les contre-pouvoirs"],
-        "c": "Elle respecte les droits fondamentaux et organise des élections libres"
-        },
-        {
-        "q": "Pourquoi peut-on dire que la démocratie est un régime perfectible ? (Niveau Terminale)",
-        "r": ["Parce qu’elle ne fonctionne que dans les petits pays", "Parce qu’elle évolue et s’adapte aux sociétés et à leurs revendications", "Parce qu’elle garantit l’autorité absolue du chef d’État", "Parce qu’elle interdit toute critique du système"],
-        "c": "Parce qu’elle évolue et s’adapte aux sociétés et à leurs revendications"
-        }
-]
-
+        {"q": "Capitale de la France ?", "r": ["Paris", "Londres", "Berlin", "Madrid"], "c": "Paris"},
+        {"q": "7 x 8 ?", "r": ["54", "56", "49", "63"], "c": "56"},
+        {"q": "Peintre de la Joconde ?", "r": ["Van Gogh", "Monet", "Léonard de Vinci", "Picasso"], "c": "Léonard de Vinci"},
+        {"q": "Symbole chimique de l'eau ?", "r": ["O2", "H2O", "CO2", "NaCl"], "c": "H2O"},
+    ]
+    # Permet d'avoir les questions pas dans le même ordre que prévue
+    random.shuffle(questions)
 
     # Scoreboard à gauche
     frame_scoreboard = tk.Frame(fenetre, bg="#2b2b2b", width=160)
@@ -118,7 +74,7 @@ def lancer_fenetre_question(pseudos):
         joueur = joueurs[joueur_actuel_index].strip()
         question_label.config(text=f"{joueur} : Appuie sur le dé avant de répondre à la question.")
 
-        bouton_de = tk.Button(frame_reponses, text="🎲 Lancer le dé", font=("Arial", 12), command=afficher_question)
+        bouton_de = ttk.Button(frame_reponses, text="🎲 Lancer le dé", command=afficher_question, style="Accent.TButton")
         bouton_de.pack(pady=20)
 
     def afficher_question():
@@ -133,7 +89,7 @@ def lancer_fenetre_question(pseudos):
                 widget.destroy()
 
             for r in q["r"]:
-                tk.Button(frame_reponses, text=r, font=("Arial", 12), command=lambda rep=r: verifier_reponse(rep)).pack(pady=5, fill="x")
+                ttk.Button(frame_reponses, style="Accent.TButton", text=r, command=lambda rep=r: verifier_reponse(rep)).pack(pady=5, fill="x")
         else:
             afficher_classement()
 
@@ -182,7 +138,7 @@ def lancer_fenetre_question(pseudos):
             tk.Label(frame_reponses, text=f"{nom} : {pts}/{total_q} ({pct:.1f}%)", font=("Arial", 12), bg="#1c1c1c", fg="white").pack()
 
         tk.Label(frame_reponses, text="Vous pouvez fermer la fenêtre.", font=("Arial", 10), bg="#1c1c1c", fg="gray").pack()
-        tk.Button(frame_reponses, text="Terminer la partie", font=("Arial", 11), command=fenetre.destroy).pack(pady=10)
+        ttk.Button(frame_reponses, text="Terminer la partie", style="Accent.TButton", command=fenetre.destroy).pack(pady=10)
 
     def abandonner_partie():
         def confirmer_abandon():
@@ -201,9 +157,8 @@ def lancer_fenetre_question(pseudos):
         bouton_frame = tk.Frame(confirmation, bg="#1c1c1c")
         bouton_frame.pack(pady=10)
 
-        tk.Button(bouton_frame, text="Revenir au jeu", command=confirmation.destroy).pack(side="left", padx=10)
-        tk.Button(bouton_frame, text="Abandonner", command=confirmer_abandon).pack(side="left", padx=10)
+        ttk.Button(bouton_frame, text="Revenir au jeu", command=confirmation.destroy, style="Accent.TButton").pack(side="left", padx=10)
+        ttk.Button(bouton_frame, text="Abandonner", command=confirmer_abandon, style="TButton").pack(side="left", padx=10)
 
-    tk.Button(frame_bas, text="Abandonner la parties", command=abandonner_partie).pack(side="right")
+    ttk.Button(frame_bas, text="Abandonner la partie", command=abandonner_partie, style="TButton").pack(side="right")
     afficher_intro_question()
-
