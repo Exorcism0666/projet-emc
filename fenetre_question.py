@@ -358,7 +358,10 @@ def lancer_fenetre_question(pseudos):
             for widget in frame_reponses.winfo_children():
                 widget.destroy()
 
-            for r in q["r"]:
+            reponses_melangees = q["r"][:]
+            random.shuffle(reponses_melangees)
+
+            for r in reponses_melangees:
                 ttk.Button(frame_reponses, style="Accent.TButton", text=r, command=lambda rep=r: verifier_reponse(rep)).pack(pady=5, fill="x")
         else:
             afficher_classement()
