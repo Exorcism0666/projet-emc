@@ -7,10 +7,9 @@ import random
 
 
 def lancer_fenetre_question(pseudos):
-    # Fenêtre principale
     fenetre = tk.Toplevel()
     fenetre.title("Jeu EMC")
-    fenetre.geometry("800x400")
+    fenetre.geometry("1200x400")
     fenetre.configure(bg="#1c1c1c")
     fenetre.resizable(False, False)
     sv.set_theme("dark")
@@ -28,81 +27,93 @@ def lancer_fenetre_question(pseudos):
     questions_posees = {joueur.strip(): 0 for joueur in joueurs}
     joueur_actuel_index = 0
 
-    # Permet d'avoir les questions pas dans le même ordre que prévue
+    # Couleurs fixes selon l'ordre
+    couleurs_fixes = ["#FF3B30", "#007AFF", "#FFD60A", "#34C759"]
+    couleurs_joueurs = {}
+    for i, joueur in enumerate(joueurs):
+        couleurs_joueurs[joueur.strip()] = couleurs_fixes[i % len(couleurs_fixes)]
     random.shuffle(questions)
 
-    # Scoreboard à gauche
-    frame_scoreboard = tk.Frame(fenetre, bg="#2b2b2b", width=160)
+    # Scoreboard
+    frame_scoreboard = tk.Frame(fenetre, bg="#2b2b2b", width=200)
     frame_scoreboard.pack(side="left", fill="y")
 
     tk.Label(frame_scoreboard, text="Scores", font=("Arial", 14, "bold"), bg="#2b2b2b", fg="white").pack(pady=10)
+
+    label_scoreboard = {}
+
     for joueur in joueurs:
         pseudo = joueur.strip()
+        couleur = couleurs_joueurs[pseudo]
         line = tk.Frame(frame_scoreboard, bg="#2b2b2b")
         line.pack(anchor="w", padx=10, pady=5)
-        tk.Label(line, text=pseudo, font=("Arial", 11), bg="#2b2b2b", fg="white").pack(side="left")
+        label = tk.Label(line, text=pseudo, font=("Arial", 11), bg="#2b2b2b", fg=couleur)
+        label.pack(side="left")
         tk.Label(line, textvariable=score_vars[pseudo], font=("Arial", 11), bg="#2b2b2b", fg="white").pack(side="right")
+        label_scoreboard[pseudo] = label
 
     # Zone centrale
     main_frame = tk.Frame(fenetre, bg="#1c1c1c")
     main_frame.pack(fill="both", expand=True)
 
-    question_label = tk.Label(main_frame, text="", font=("Arial", 14), bg="#1c1c1c", fg="white")
-    question_label.pack(pady=20)
+    pseudo_label = tk.Label(main_frame, text="", font=("Arial", 18, "bold"), bg="#1c1c1c", fg="white", justify="center")
+    pseudo_label.pack(pady=(20, 5))
 
-    score_label = tk.Label(main_frame, text="", font=("Arial", 12), bg="#1c1c1c", fg="white")
-    score_label.pack()
+    question_label = tk.Label(main_frame, text="", font=("Arial", 14), bg="#1c1c1c", fg="white", wraplength=600, justify="center")
+    question_label.pack(pady=5)
 
+    # ✅ Ces lignes étaient manquantes
     frame_reponses = tk.Frame(main_frame, bg="#1c1c1c")
     frame_reponses.pack()
 
     frame_bas = tk.Frame(main_frame, bg="#1c1c1c")
     frame_bas.pack(side="bottom", fill="x", padx=10, pady=10)
 
+    def mettre_a_jour_scoreboard():
+        for joueur in joueurs:
+            pseudo = joueur.strip()
+            couleur = couleurs_joueurs[pseudo]
+            if pseudo == joueurs[joueur_actuel_index].strip():
+                label_scoreboard[pseudo].config(font=("Arial", 12, "bold"), fg=couleur)
+            else:
+                label_scoreboard[pseudo].config(font=("Arial", 11), fg=couleur)
+
     def afficher_intro_question():
         nonlocal joueur_actuel_index
-
         for widget in frame_reponses.winfo_children():
             widget.destroy()
-
         joueur = joueurs[joueur_actuel_index].strip()
-        question_label.config(text=f"{joueur} : Appuie sur le dé avant de répondre à la question.")
+        couleur = couleurs_joueurs[joueur]
+        mettre_a_jour_scoreboard()
+
+        pseudo_label.config(text=joueur, fg=couleur)
+        question_label.config(
+            text="Appuie sur le dé avant de répondre à la question.",
+            fg="white"
+        )
 
         bouton_de = ttk.Button(frame_reponses, text="🎲 Lancer le dé", command=afficher_question, style="Accent.TButton")
         bouton_de.pack(pady=20)
 
     def afficher_question():
         nonlocal index_question, joueur_actuel_index
-
         if index_question < len(questions):
             joueur = joueurs[joueur_actuel_index].strip()
+            couleur = couleurs_joueurs[joueur]
+            mettre_a_jour_scoreboard()
             q = questions[index_question]
-            question_label.config(text=f"{joueur} : {q['q']}")
+
+            pseudo_label.config(text=joueur, fg=couleur)
+            question_label.config(text=q["q"], fg="white")
 
             for widget in frame_reponses.winfo_children():
                 widget.destroy()
-
             reponses_melangees = q["r"][:]
             random.shuffle(reponses_melangees)
-
             for r in reponses_melangees:
                 ttk.Button(frame_reponses, style="Accent.TButton", text=r, command=lambda rep=r: verifier_reponse(rep)).pack(pady=5, fill="x")
         else:
             afficher_classement()
-
-    def verifier_reponse(reponse):
-        nonlocal index_question, joueur_actuel_index
-        joueur = joueurs[joueur_actuel_index].strip()
-        questions_posees[joueur] += 1
-        if reponse == questions[index_question]["c"]:
-            scores[joueur] += 1
-        joueur_actuel_index = (joueur_actuel_index + 1) % nb_joueurs
-        index_question += 1
-        afficher_intro_question()  # Affiche l'annonce du prochain joueur
-
-    # Commencer par la page d’introduction au lieu de la question directe :
-    afficher_intro_question()
-
 
     def verifier_reponse(reponse):
         nonlocal index_question, joueur_actuel_index
@@ -115,9 +126,9 @@ def lancer_fenetre_question(pseudos):
         index_question += 1
         afficher_intro_question()
 
-
     def afficher_classement():
-        question_label.config(text="Le quiz est terminé ! 🎉")
+        pseudo_label.config(text="")
+        question_label.config(text="Le quiz est terminé ! 🎉", fg="white")
         for widget in frame_reponses.winfo_children():
             widget.destroy()
 
@@ -132,7 +143,8 @@ def lancer_fenetre_question(pseudos):
         classement.sort(key=lambda x: x[3], reverse=True)
 
         for nom, pts, total_q, pct in classement:
-            tk.Label(frame_reponses, text=f"{nom} : {pts}/{total_q} ({pct:.1f}%)", font=("Arial", 12), bg="#1c1c1c", fg="white").pack()
+            couleur = couleurs_joueurs[nom]
+            tk.Label(frame_reponses, text=f"{nom} : {pts}/{total_q} ({pct:.1f}%)", font=("Arial", 12), bg="#1c1c1c", fg=couleur).pack()
 
         tk.Label(frame_reponses, text="Vous pouvez fermer la fenêtre.", font=("Arial", 10), bg="#1c1c1c", fg="gray").pack()
         ttk.Button(frame_reponses, text="Terminer la partie", style="Accent.TButton", command=fenetre.destroy).pack(pady=10)
