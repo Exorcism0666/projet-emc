@@ -268,5 +268,45 @@ questions = questions = [
       "Rendre le vote obligatoire pour les moins de 18 ans."
     ],
     "c": "Permettre aux citoyens de proposer ou d’abroger une loi sans passer par le Parlement."
+  },
+  {
+    "q": "Quel est l’un des rôles du débat public en démocratie ?",
+    "r": [
+      "Permettre aux citoyens de confronter leurs idées",
+      "Éviter toute contradiction dans les institutions",
+      "Empêcher la presse de diffuser certaines opinions",
+      "Décider à la place des élus"
+    ],
+    "c": "Permettre aux citoyens de confronter leurs idées"
+  },
+  {
+    "q": "Quel droit politique essentiel permet aux citoyens d’influencer la vie publique ?",
+    "r": [
+      "Le droit de vote",
+      "Le droit de propriété",
+      "Le droit au silence",
+      "Le droit de commercer librement"
+    ],
+    "c": "Le droit de vote"
+  },
+  {
+    "q": "En démocratie, pourquoi l’indépendance des médias est-elle importante ?",
+    "r": [
+      "Pour garantir une information libre et plurielle",
+      "Pour empêcher la critique du gouvernement",
+      "Pour relayer uniquement la parole officielle",
+      "Pour contrôler les réseaux sociaux"
+    ],
+    "c": "Pour garantir une information libre et plurielle"
+  },
+  {
+    "q": "Comment appelle-t-on une assemblée tirée au sort pour représenter les citoyens ?",
+    "r": [
+      "Une convention citoyenne",
+      "Un comité d’experts",
+      "Un conseil d’administration",
+      "Un jury judiciaire"
+    ],
+    "c": "Une convention citoyenne"
   }
 ]
