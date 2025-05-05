@@ -7,6 +7,15 @@ from fenetre_question import lancer_fenetre_question
 # Liste pour stocker les pseudos
 pseudos = []
 
+# Couleurs fixes selon la position
+colors = ["#FF5555", "#5555FF", "#FFD700", "#55FF55"]  # Rouge, Bleu, Jaune, Vert
+
+def mettre_a_jour_couleurs(listbox_pseudos):
+    listbox_pseudos.delete(0, tk.END)
+    for index, pseudo in enumerate(pseudos):
+        listbox_pseudos.insert(tk.END, pseudo)
+        listbox_pseudos.itemconfig(index, fg=colors[index])
+
 def ajouter_pseudo(pseudo_entry, listbox_pseudos):
     if len(pseudos) >= 4:
         afficher_message_bloquant("Erreur", "Vous ne pouvez pas ajouter plus de 4 pseudos.")
@@ -14,15 +23,12 @@ def ajouter_pseudo(pseudo_entry, listbox_pseudos):
     pseudo = pseudo_entry.get()
 
     if pseudo:
-        pseudo = pseudo.center(20)  # Formatage pour 20 caractères centrés
+        pseudo = pseudo.center(20)
         if pseudo in pseudos:
             afficher_message_bloquant("Erreur", "Ce pseudonyme est déjà utilisé par un autre joueur.")
             return
         pseudos.append(pseudo)
-        index = len(pseudos) - 1
-        colors = ["#FF5555", "#5555FF", "#FFD700", "#55FF55"]  # Rouge, Bleu, Jaune, Vert
-        listbox_pseudos.insert(tk.END, pseudo)
-        listbox_pseudos.itemconfig(index, fg=colors[index])
+        mettre_a_jour_couleurs(listbox_pseudos)
         pseudo_entry.delete(0, tk.END)
     else:
         afficher_message_bloquant("Erreur", "Veuillez entrer un pseudo.")
@@ -31,8 +37,8 @@ def supprimer_pseudo(listbox_pseudos):
     selection = listbox_pseudos.curselection()
     if selection:
         index = selection[0]
-        listbox_pseudos.delete(index)
         pseudos.pop(index)
+        mettre_a_jour_couleurs(listbox_pseudos)
     else:
         afficher_message_bloquant("Erreur", "Veuillez sélectionner un pseudo à supprimer.")
 
@@ -161,7 +167,7 @@ def ouvrir_fenetre_jeu(fenetre_principale):
     fenetre_jeu.configure(bg="#1c1c1c")
     fenetre_jeu.resizable(False, False)
     sv.set_theme("dark")
-    
+
     def retour_accueil():
         fenetre_jeu.destroy()
         fenetre_principale.deiconify()
