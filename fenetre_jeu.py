@@ -15,7 +15,7 @@ def mettre_a_jour_couleurs(listbox_pseudos):
     for index, pseudo in enumerate(pseudos):
         listbox_pseudos.insert(tk.END, pseudo)
         listbox_pseudos.itemconfig(index, fg=colors[index])
-
+a
 def ajouter_pseudo(pseudo_entry, listbox_pseudos):
     if len(pseudos) >= 4:
         afficher_message_bloquant("Erreur", "Vous ne pouvez pas ajouter plus de 4 pseudos.")
