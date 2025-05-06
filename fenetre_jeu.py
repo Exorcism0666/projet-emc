@@ -1,9 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 import sv_ttk as sv
-from utils import afficher_message_bloquant
+from utils import afficher_message_bloquant, centrage_de_fenetre
 from fenetre_question import lancer_fenetre_question
-
 # Liste pour stocker les pseudos
 pseudos = []
 
@@ -149,12 +148,8 @@ def afficher_reglement(fenetre_jeu, on_commencer=None):
     update_page()
 
     # Centrer la fenêtre
-    reglement_window.update_idletasks()
-    width = reglement_window.winfo_width()
-    height = reglement_window.winfo_height()
-    x = (reglement_window.winfo_screenwidth() // 2) - (width // 2)
-    y = (reglement_window.winfo_screenheight() // 2) - (height // 2)
-    reglement_window.geometry(f"+{x}+{y}")
+    centrage_de_fenetre(fenetre_jeu, 400, 550)
+
 
     reglement_window.grab_set()
 
@@ -207,9 +202,5 @@ def ouvrir_fenetre_jeu(fenetre_principale):
     btn_retour = ttk.Button(fenetre_jeu, text="Retour à l'accueil", command=retour_accueil)
     btn_retour.pack(pady=10)
 
-    fenetre_jeu.update_idletasks()
-    width = fenetre_jeu.winfo_width()
-    height = fenetre_jeu.winfo_height()
-    x = (fenetre_jeu.winfo_screenwidth() // 2) - (width // 2)
-    y = (fenetre_jeu.winfo_screenheight() // 2) - (height // 2)
-    fenetre_jeu.geometry(f"+{x}+{y}")
+    centrage_de_fenetre(fenetre_jeu, 400, 550)
+
