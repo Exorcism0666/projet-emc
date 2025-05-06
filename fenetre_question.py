@@ -1,10 +1,30 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import sv_ttk as sv
-from tkinter import messagebox
 from liste_question import questions
 import random
+import serial
+import threading
+import time
 
+# Configuration du port série
+SERIAL_PORT = 'COM3'
+BAUD_RATE = 9600
+
+# Fonction pour lire le résultat du dé depuis l'Arduino
+def lire_resultat_de(callback):
+    try:
+        ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=10)
+        line = ser.readline().decode('utf-8').strip()
+        ser.close()
+        if line.isdigit():
+            callback(int(line))
+        else:
+            print("Valeur invalide reçue :", line)
+            callback(None)
+    except serial.SerialException as e:
+        print("Erreur de communication série:", e)
+        callback(None)
 
 def lancer_fenetre_question(pseudos):
     fenetre = tk.Toplevel()
@@ -14,40 +34,28 @@ def lancer_fenetre_question(pseudos):
     fenetre.resizable(False, False)
     sv.set_theme("dark")
 
-    def on_closing():
-        pass
-
-    fenetre.protocol("WM_DELETE_WINDOW", on_closing)
-
     index_question = 0
     joueurs = pseudos
     nb_joueurs = len(joueurs)
-    scores = {joueur.strip(): 0 for joueur in joueurs}
-    score_vars = {joueur.strip(): tk.IntVar(value=0) for joueur in joueurs}
-    questions_posees = {joueur.strip(): 0 for joueur in joueurs}
+    scores = {j.strip(): 0 for j in joueurs}
+    score_vars = {j.strip(): tk.IntVar(value=0) for j in joueurs}
+    questions_posees = {j.strip(): 0 for j in joueurs}
     joueur_actuel_index = 0
 
-    # Timer variables
     timer_id = None
     temps_restant = 20
 
-    # Couleurs fixes selon l'ordre
     couleurs_fixes = ["#FF3B30", "#007AFF", "#FFD60A", "#34C759"]
-    couleurs_joueurs = {}
-    for i, joueur in enumerate(joueurs):
-        couleurs_joueurs[joueur.strip()] = couleurs_fixes[i % len(couleurs_fixes)]
+    couleurs_joueurs = {j.strip(): couleurs_fixes[i % len(couleurs_fixes)] for i, j in enumerate(joueurs)}
     random.shuffle(questions)
 
-    # Scoreboard
     frame_scoreboard = tk.Frame(fenetre, bg="#2b2b2b", width=200)
     frame_scoreboard.pack(side="left", fill="y")
-
     tk.Label(frame_scoreboard, text="Scores", font=("Arial", 14, "bold"), bg="#2b2b2b", fg="white").pack(pady=10)
-
     label_scoreboard = {}
 
-    for joueur in joueurs:
-        pseudo = joueur.strip()
+    for j in joueurs:
+        pseudo = j.strip()
         couleur = couleurs_joueurs[pseudo]
         line = tk.Frame(frame_scoreboard, bg="#2b2b2b")
         line.pack(anchor="w", padx=10, pady=5)
@@ -56,18 +64,16 @@ def lancer_fenetre_question(pseudos):
         tk.Label(line, textvariable=score_vars[pseudo], font=("Arial", 11), bg="#2b2b2b", fg="white").pack(side="right")
         label_scoreboard[pseudo] = label
 
-    # Zone centrale
     main_frame = tk.Frame(fenetre, bg="#1c1c1c")
     main_frame.pack(fill="both", expand=True)
 
-    # Timer label
-    label_timer = tk.Label(main_frame, text="", font=("Arial", 14, "bold"), bg="#1c1c1c", fg="white", justify="center")
+    label_timer = tk.Label(main_frame, text="", font=("Arial", 14, "bold"), bg="#1c1c1c", fg="white")
     label_timer.pack(pady=(10, 0))
 
-    pseudo_label = tk.Label(main_frame, text="", font=("Arial", 18, "bold"), bg="#1c1c1c", fg="white", justify="center")
+    pseudo_label = tk.Label(main_frame, text="", font=("Arial", 18, "bold"), bg="#1c1c1c", fg="white")
     pseudo_label.pack(pady=(10, 5))
 
-    question_label = tk.Label(main_frame, text="", font=("Arial", 14), bg="#1c1c1c", fg="white", wraplength=600, justify="center")
+    question_label = tk.Label(main_frame, text="", font=("Arial", 14), bg="#1c1c1c", fg="white", wraplength=600)
     question_label.pack(pady=5)
 
     frame_reponses = tk.Frame(main_frame, bg="#1c1c1c")
@@ -77,8 +83,8 @@ def lancer_fenetre_question(pseudos):
     frame_bas.pack(side="bottom", fill="x", padx=10, pady=10)
 
     def mettre_a_jour_scoreboard():
-        for joueur in joueurs:
-            pseudo = joueur.strip()
+        for j in joueurs:
+            pseudo = j.strip()
             couleur = couleurs_joueurs[pseudo]
             if pseudo == joueurs[joueur_actuel_index].strip():
                 label_scoreboard[pseudo].config(font=("Arial", 12, "bold"), fg=couleur)
@@ -107,7 +113,6 @@ def lancer_fenetre_question(pseudos):
             fenetre.after(3000, passer_joueur_suivant)
 
     def afficher_intro_question():
-        nonlocal joueur_actuel_index
         for widget in frame_reponses.winfo_children():
             widget.destroy()
         joueur = joueurs[joueur_actuel_index].strip()
@@ -116,20 +121,29 @@ def lancer_fenetre_question(pseudos):
 
         pseudo_label.config(text=joueur, fg=couleur)
         label_timer.config(text="")
-        question_label.config(
-            text="Appuie sur le dé avant de répondre à la question.",
-            fg="white"
-        )
+        question_label.config(text="Appuie sur le bouton (Arduino) avant de répondre à la question.", fg="white")
 
-        bouton_de = ttk.Button(frame_reponses, text="🎲 Lancer le dé", command=afficher_question, style="Accent.TButton")
+        bouton_de = ttk.Button(frame_reponses, text="🎲 Lire le résultat du dé", style="Accent.TButton",
+                               command=lire_de_depuis_arduino)
         bouton_de.pack(pady=20)
 
-    def afficher_question():
-        nonlocal index_question, joueur_actuel_index, temps_restant, timer_id
-        if timer_id:
-            fenetre.after_cancel(timer_id)
-        temps_restant = 20
+    def lire_de_depuis_arduino():
+        for widget in frame_reponses.winfo_children():
+            widget.destroy()
+        label_timer.config(text="Attente du résultat de l'Arduino...", fg="gray")
+        threading.Thread(target=lire_resultat_de, args=(apres_lancer_de,), daemon=True).start()
 
+    def apres_lancer_de(valeur):
+        if valeur is None:
+            messagebox.showerror("Erreur", "Impossible de lire le résultat du dé depuis l'Arduino.")
+            afficher_intro_question()
+        else:
+            label_timer.config(text=f"🎲 Résultat du dé : {valeur}", fg="green")
+            fenetre.after(2000, afficher_question)
+
+    def afficher_question():
+        nonlocal index_question, temps_restant, timer_id
+        temps_restant = 20
         if index_question < len(questions):
             joueur = joueurs[joueur_actuel_index].strip()
             couleur = couleurs_joueurs[joueur]
@@ -144,17 +158,17 @@ def lancer_fenetre_question(pseudos):
             reponses_melangees = q["r"][:]
             random.shuffle(reponses_melangees)
             for r in reponses_melangees:
-                ttk.Button(frame_reponses, style="Accent.TButton", text=r, command=lambda rep=r: verifier_reponse(rep)).pack(pady=5, fill="x")
+                ttk.Button(frame_reponses, text=r, style="Accent.TButton",
+                           command=lambda rep=r: verifier_reponse(rep)).pack(pady=5, fill="x")
 
             lancer_timer()
         else:
             afficher_classement()
 
     def verifier_reponse(reponse):
-        nonlocal index_question, joueur_actuel_index, timer_id
+        nonlocal joueur_actuel_index, index_question, timer_id
         if timer_id:
             fenetre.after_cancel(timer_id)
-
         joueur = joueurs[joueur_actuel_index].strip()
         questions_posees[joueur] += 1
         if reponse == questions[index_question]["c"]:
@@ -170,44 +184,33 @@ def lancer_fenetre_question(pseudos):
         question_label.config(text="Le quiz est terminé ! 🎉", fg="white")
         for widget in frame_reponses.winfo_children():
             widget.destroy()
-
         classement = []
-        for joueur in joueurs:
-            j = joueur.strip()
-            score = scores[j]
-            total = questions_posees[j]
-            pourcentage = (score / total) * 100 if total else 0
-            classement.append((j, score, total, pourcentage))
-
+        for j in joueurs:
+            pseudo = j.strip()
+            score = scores[pseudo]
+            total = questions_posees[pseudo]
+            pct = (score / total) * 100 if total else 0
+            classement.append((pseudo, score, total, pct))
         classement.sort(key=lambda x: x[3], reverse=True)
-
         for nom, pts, total_q, pct in classement:
             couleur = couleurs_joueurs[nom]
             tk.Label(frame_reponses, text=f"{nom} : {pts}/{total_q} ({pct:.1f}%)", font=("Arial", 12), bg="#1c1c1c", fg=couleur).pack()
-
-        tk.Label(frame_reponses, text="Vous pouvez fermer la fenêtre.", font=("Arial", 10), bg="#1c1c1c", fg="gray").pack()
-        ttk.Button(frame_reponses, text="Terminer la partie", style="Accent.TButton", command=fenetre.destroy).pack(pady=10)
+        ttk.Button(frame_reponses, text="Terminer la partie", command=fenetre.destroy, style="Accent.TButton").pack(pady=10)
 
     def abandonner_partie():
-        def confirmer_abandon():
+        def confirmer():
             fenetre.destroy()
-
         confirmation = tk.Toplevel(fenetre)
-        confirmation.title("Confirmer l'abandon")
+        confirmation.title("Abandon")
         confirmation.geometry("400x200")
         confirmation.configure(bg="#1c1c1c")
-        confirmation.resizable(False, False)
         sv.set_theme("dark")
         confirmation.protocol("WM_DELETE_WINDOW", lambda: None)
+        tk.Label(confirmation, text="Voulez-vous abandonner la partie ?", font=("Arial", 11), bg="#1c1c1c", fg="white").pack(pady=20)
+        frame = tk.Frame(confirmation, bg="#1c1c1c")
+        frame.pack()
+        ttk.Button(frame, text="Revenir", command=confirmation.destroy).pack(side="left", padx=10)
+        ttk.Button(frame, text="Abandonner", command=confirmer).pack(side="left", padx=10)
 
-        tk.Label(confirmation, text="Êtes-vous certain de vouloir abandonner la partie ?\nVotre score sera de 0 et vous devrez reprendre de 0.", font=("Arial", 11), bg="#1c1c1c", fg="white", wraplength=380).pack(pady=20)
-
-        bouton_frame = tk.Frame(confirmation, bg="#1c1c1c")
-        bouton_frame.pack(pady=10)
-
-        ttk.Button(bouton_frame, text="Revenir au jeu", command=confirmation.destroy, style="Accent.TButton").pack(side="left", padx=10)
-        ttk.Button(bouton_frame, text="Abandonner", command=confirmer_abandon, style="TButton").pack(side="left", padx=10)
-
-    ttk.Button(frame_bas, text="Abandonner la partie", command=abandonner_partie, style="TButton").pack(side="right")
+    ttk.Button(frame_bas, text="Abandonner la partie", command=abandonner_partie).pack(side="right")
     afficher_intro_question()
-
