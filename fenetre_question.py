@@ -6,6 +6,7 @@ import random
 import serial
 import threading
 import time
+from utils import centrage_de_fenetre
 
 # Configuration du port série
 SERIAL_PORT = 'COM3'
