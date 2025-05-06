@@ -10,7 +10,7 @@ def afficher_message_bloquant(titre, message):
     popup.title(titre)
     popup.configure(bg="#1c1c1c")
     popup.resizable(False, False)
-
+    popup.transient(parent)
     label = ttk.Label(popup, text=message, font=("Arial", 12), background="#1c1c1c", foreground="white", wraplength=280)
     label.pack(pady=20, padx=20)
     ttk.Button(popup, text="OK", command=popup.destroy).pack()
@@ -36,3 +36,13 @@ def afficher_texte(texte_intro, description, index=0):
     if index < len(description):
         texte_intro.config(text=description[:index+1])
         texte_intro.after(50, afficher_texte, texte_intro, description, index+1)
+
+def centrage_de_fenetre(window, width=400, height=300):
+    """Centre une fenêtre Tkinter sur l'écran."""
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    x = int((screen_width / 2) - (width / 2))
+    y = int((screen_height / 2) - (height / 2))
+
+    window.geometry(f"{width}x{height}+{x}+{y}")
