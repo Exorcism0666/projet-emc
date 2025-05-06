@@ -2,14 +2,15 @@ import tkinter as tk
 from tkinter import ttk
 import sv_ttk as sv
 from fenetre_jeu import ouvrir_fenetre_jeu
-from utils import effet_fondu, afficher_texte, ouvrir_lien_mit
+from utils import effet_fondu, afficher_texte, ouvrir_lien_mit, afficher_message_bloquant
 from constants import BACKGROUND_COLOR, FOREGROUND_COLOR, TITRE, DESCRIPTION
 from styles import configurer_styles
+from utils import centrage_de_fenetre
 
 # Création de la fenêtre principale
 fenetre = tk.Tk()
 fenetre.title("Jeu EMC")
-fenetre.geometry("500x400")
+centrage_de_fenetre(fenetre, 500, 400)
 fenetre.configure(bg=BACKGROUND_COLOR)
 fenetre.resizable(False, False)
 sv.set_theme("dark")
