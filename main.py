@@ -5,6 +5,7 @@ from fenetre_jeu import ouvrir_fenetre_jeu
 from utils import effet_fondu, afficher_texte, ouvrir_lien_mit, afficher_message_bloquant
 from constants import BACKGROUND_COLOR, FOREGROUND_COLOR, TITRE, DESCRIPTION
 from styles import configurer_styles
+from utils import centrage_de_fenetre
 
 # Création de la fenêtre principale
 fenetre = tk.Tk()

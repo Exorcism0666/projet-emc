@@ -29,7 +29,7 @@ def lire_resultat_de(callback):
 def lancer_fenetre_question(pseudos):
     fenetre = tk.Toplevel()
     fenetre.title("Jeu EMC")
-    fenetre.geometry("1200x400")
+    centrage_de_fenetre(fenetre, 1200, 400)
     fenetre.configure(bg="#1c1c1c")
     fenetre.resizable(False, False)
     sv.set_theme("dark")
@@ -201,8 +201,8 @@ def lancer_fenetre_question(pseudos):
         def confirmer():
             fenetre.destroy()
         confirmation = tk.Toplevel(fenetre)
-        confirmation.title("Abandon")
-        confirmation.geometry("400x200")
+        confirmation.title("Confirmer l'abandon")
+        centrage_de_fenetre(confirmation, 1200, 400)
         confirmation.configure(bg="#1c1c1c")
         sv.set_theme("dark")
         confirmation.protocol("WM_DELETE_WINDOW", lambda: None)
@@ -212,5 +212,18 @@ def lancer_fenetre_question(pseudos):
         ttk.Button(frame, text="Revenir", command=confirmation.destroy).pack(side="left", padx=10)
         ttk.Button(frame, text="Abandonner", command=confirmer).pack(side="left", padx=10)
 
-    ttk.Button(frame_bas, text="Abandonner la partie", command=abandonner_partie).pack(side="right")
+        tk.Label(confirmation, text="Êtes-vous certain de vouloir abandonner la partie ?\nVotre progression ne sera pas conservé", font=("Arial", 20), bg="#1c1c1c", fg="red", wraplength=500).pack(pady=20)
+
+        bouton_frame = tk.Frame(confirmation, bg="#1c1c1c")
+        bouton_frame.pack(pady=10)
+
+        ttk.Button(bouton_frame, text="Revenir au jeu", command=confirmation.destroy, style="Accent.TButton").pack(side="left", padx=30)
+        ttk.Button(bouton_frame, text="Abandonner", command=confirmer_abandon, style="TButton").pack(side="left", padx=30)
+        confirmation.grab_set()
+        confirmation.focus_force()
+        confirmation.wait_window()
+        parent=lancer_fenetre_question
+
+
+    ttk.Button(frame_bas, text="Abandonner la partie", command=abandonner_partie, style="TButton").pack(side="right")
     afficher_intro_question()

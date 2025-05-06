@@ -3,7 +3,6 @@ from tkinter import ttk
 import sv_ttk as sv
 from utils import afficher_message_bloquant, centrage_de_fenetre
 from fenetre_question import lancer_fenetre_question
-
 # Liste pour stocker les pseudos
 pseudos = []
 

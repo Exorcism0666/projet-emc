@@ -11,7 +11,6 @@ def afficher_message_bloquant(titre, message):
     popup.configure(bg="#1c1c1c")
     popup.resizable(False, False)
     popup.transient(parent)
-
     label = ttk.Label(popup, text=message, font=("Arial", 12), background="#1c1c1c", foreground="white", wraplength=280)
     label.pack(pady=20, padx=20)
     ttk.Button(popup, text="OK", command=popup.destroy).pack()
