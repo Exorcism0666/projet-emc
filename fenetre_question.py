@@ -215,3 +215,4 @@ def lancer_fenetre_question(pseudos):
 
     ttk.Button(frame_bas, text="Abandonner la partie", command=abandonner_partie, style="TButton").pack(side="right")
     afficher_intro_question()
+
