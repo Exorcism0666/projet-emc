@@ -8,14 +8,14 @@ import threading
 import time
 from utils import centrage_de_fenetre
 
-# Configuration du port série
 SERIAL_PORT = 'COM3'
 BAUD_RATE = 9600
 
-# Fonction pour lire le résultat du dé depuis l'Arduino
 def lire_resultat_de(callback):
     try:
         ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=10)
+        time.sleep(2)  # temps de reset
+        ser.write(b"start\n")  # envoi du signal de départ
         line = ser.readline().decode('utf-8').strip()
         ser.close()
         if line.isdigit():
@@ -103,11 +103,11 @@ def lancer_fenetre_question(pseudos):
     def lancer_timer():
         nonlocal temps_restant, timer_id
         if temps_restant > 0:
-            label_timer.config(text=f"⏱️ Temps restant : {temps_restant} s", fg="white")
+            label_timer.config(text=f"\u23f1\ufe0f Temps restant : {temps_restant} s", fg="white")
             temps_restant -= 1
             timer_id = fenetre.after(1000, lancer_timer)
         else:
-            label_timer.config(text="⏰ TEMPS IMPARTI", font=("Arial", 28, "bold"), fg="red")
+            label_timer.config(text="\u23f0 TEMPS IMPARTI", font=("Arial", 28, "bold"), fg="red")
             for widget in frame_reponses.winfo_children():
                 widget.destroy()
             question_label.config(text="")
@@ -122,24 +122,28 @@ def lancer_fenetre_question(pseudos):
 
         pseudo_label.config(text=joueur, fg=couleur)
         label_timer.config(text="")
-        question_label.config(text="Appuie sur le bouton (Arduino) avant de répondre à la question.", fg="white")
+        question_label.config(text="Appuie sur le bouton (Arduino) pour lancer le dé.", fg="white")
 
-        bouton_de = ttk.Button(frame_reponses, text="🎲 Lire le résultat du dé", style="Accent.TButton",
+        bouton_de = ttk.Button(frame_reponses, text="\ud83c\udfb2 Lire le résultat du dé", style="Accent.TButton",
                                command=lire_de_depuis_arduino)
         bouton_de.pack(pady=20)
 
     def lire_de_depuis_arduino():
         for widget in frame_reponses.winfo_children():
             widget.destroy()
-        label_timer.config(text="Attente du résultat de l'Arduino...", fg="gray")
-        threading.Thread(target=lire_resultat_de, args=(apres_lancer_de,), daemon=True).start()
+        label_timer.config(text="Préparation du dé...", fg="gray")
+
+        def thread_fonction():
+            lire_resultat_de(lambda val: fenetre.after(0, lambda: apres_lancer_de(val)))
+
+        threading.Thread(target=thread_fonction, daemon=True).start()
 
     def apres_lancer_de(valeur):
         if valeur is None:
             messagebox.showerror("Erreur", "Impossible de lire le résultat du dé depuis l'Arduino.")
             afficher_intro_question()
         else:
-            label_timer.config(text=f"🎲 Résultat du dé : {valeur}", fg="green")
+            label_timer.config(text=f"\ud83c\udfb2 Résultat du dé : {valeur}", fg="green")
             fenetre.after(2000, afficher_question)
 
     def afficher_question():
@@ -182,7 +186,7 @@ def lancer_fenetre_question(pseudos):
     def afficher_classement():
         pseudo_label.config(text="")
         label_timer.config(text="")
-        question_label.config(text="Le quiz est terminé ! 🎉", fg="white")
+        question_label.config(text="Le quiz est terminé ! \ud83c\udf89", fg="white")
         for widget in frame_reponses.winfo_children():
             widget.destroy()
         classement = []
@@ -208,23 +212,13 @@ def lancer_fenetre_question(pseudos):
         sv.set_theme("dark")
         confirmation.protocol("WM_DELETE_WINDOW", lambda: None)
         tk.Label(confirmation, text="Voulez-vous abandonner la partie ?", font=("Arial", 11), bg="#1c1c1c", fg="white").pack(pady=20)
-        frame = tk.Frame(confirmation, bg="#1c1c1c")
-        frame.pack()
-        ttk.Button(frame, text="Revenir", command=confirmation.destroy).pack(side="left", padx=10)
-        ttk.Button(frame, text="Abandonner", command=confirmer).pack(side="left", padx=10)
-
-        tk.Label(confirmation, text="Êtes-vous certain de vouloir abandonner la partie ?\nVotre progression ne sera pas conservé", font=("Arial", 20), bg="#1c1c1c", fg="red", wraplength=500).pack(pady=20)
-
         bouton_frame = tk.Frame(confirmation, bg="#1c1c1c")
         bouton_frame.pack(pady=10)
-
         ttk.Button(bouton_frame, text="Revenir au jeu", command=confirmation.destroy, style="Accent.TButton").pack(side="left", padx=30)
-        ttk.Button(bouton_frame, text="Abandonner", command=confirmer_abandon, style="TButton").pack(side="left", padx=30)
+        ttk.Button(bouton_frame, text="Abandonner", command=confirmer, style="TButton").pack(side="left", padx=30)
         confirmation.grab_set()
         confirmation.focus_force()
         confirmation.wait_window()
-        parent=lancer_fenetre_question
-
 
     ttk.Button(frame_bas, text="Abandonner la partie", command=abandonner_partie, style="TButton").pack(side="right")
     afficher_intro_question()
