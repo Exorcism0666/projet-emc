@@ -8,24 +8,42 @@ import threading
 import time
 from utils import centrage_de_fenetre
 
-SERIAL_PORT = 'COM3'
+SERIAL_PORT = 'COM15'
 BAUD_RATE = 9600
 
 def lire_resultat_de(callback):
     try:
-        ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=10)
-        time.sleep(2)  # temps de reset
-        ser.write(b"start\n")  # envoi du signal de départ
-        line = ser.readline().decode('utf-8').strip()
-        ser.close()
-        if line.isdigit():
-            callback(int(line))
-        else:
-            print("Valeur invalide reçue :", line)
+        with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=30) as ser:
+            time.sleep(2)
+            ser.reset_input_buffer()
+            ser.write(b"start\n")
+            print("[Python] → 'start' envoyé, attente bouton utilisateur...")
+
+            # Attendre jusqu'à réception d'une ligne correcte
+            ligne = ""
+            start_time = time.time()
+            while True:
+                if ser.in_waiting:
+                    ligne = ser.readline().decode('utf-8').strip()
+                    print("[Python] ← Reçu :", ligne)
+                    if ligne.isdigit():
+                        callback(int(ligne))
+                        return
+                    else:
+                        print("⚠ Réponse invalide reçue :", ligne)
+                        break
+
+                if time.time() - start_time > 20:  # délai max pour l'interaction
+                    print("⏱ Timeout après 20 secondes sans réponse.")
+                    break
+                time.sleep(0.1)
+
             callback(None)
+
     except serial.SerialException as e:
-        print("Erreur de communication série:", e)
+        print("❌ Erreur de communication série:", e)
         callback(None)
+
 
 def lancer_fenetre_question(pseudos):
     fenetre = tk.Toplevel()
