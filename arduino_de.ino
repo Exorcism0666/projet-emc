@@ -1,10 +1,10 @@
 #include <LiquidCrystal.h>
 
 // Initialisation de l'écran LCD
-LiquidCrystal lcd_1(12, 11, 5, 4, 3, 2);
+LiquidCrystal lcd_1(19, 23, 18, 17, 16, 15);
 
 // Définition des constantes et variables
-const int buttonPin = 7;
+const int buttonPin = 21;
 bool isAnimating = false;
 bool isWaitingForButton = false; // on attendra l'ordre depuis Python
 unsigned long previousMillis = 0;
