@@ -8,7 +8,7 @@ import threading
 import time
 from utils import centrage_de_fenetre
 
-SERIAL_PORT = 'COM15'
+SERIAL_PORT = '/dev/ttyUSB0'
 BAUD_RATE = 9600
 
 def lire_resultat_de(callback):
@@ -121,11 +121,11 @@ def lancer_fenetre_question(pseudos):
     def lancer_timer():
         nonlocal temps_restant, timer_id
         if temps_restant > 0:
-            label_timer.config(text=f"\u23f1\ufe0f Temps restant : {temps_restant} s", fg="white")
+            label_timer.config(text=f"⏱️ Temps restant : {temps_restant} s", fg="white")
             temps_restant -= 1
             timer_id = fenetre.after(1000, lancer_timer)
         else:
-            label_timer.config(text="\u23f0 TEMPS IMPARTI", font=("Arial", 28, "bold"), fg="red")
+            label_timer.config(text="⏰ TEMPS IMPARTI", font=("Arial", 28, "bold"), fg="red")
             for widget in frame_reponses.winfo_children():
                 widget.destroy()
             question_label.config(text="")
@@ -142,7 +142,7 @@ def lancer_fenetre_question(pseudos):
         label_timer.config(text="")
         question_label.config(text="Appuie sur le bouton (Arduino) pour lancer le dé.", fg="white")
 
-        bouton_de = ttk.Button(frame_reponses, text="\ud83c\udfb2 Lire le résultat du dé", style="Accent.TButton",
+        bouton_de = ttk.Button(frame_reponses, text="🎲 Lire le résultat du dé", style="Accent.TButton",
                                command=lire_de_depuis_arduino)
         bouton_de.pack(pady=20)
 
@@ -161,7 +161,7 @@ def lancer_fenetre_question(pseudos):
             messagebox.showerror("Erreur", "Impossible de lire le résultat du dé depuis l'Arduino.")
             afficher_intro_question()
         else:
-            label_timer.config(text=f"\ud83c\udfb2 Résultat du dé : {valeur}", fg="green")
+            label_timer.config(text=f"🎲 Résultat du dé : {valeur}", fg="green")
             fenetre.after(2000, afficher_question)
 
     def afficher_question():
@@ -204,7 +204,7 @@ def lancer_fenetre_question(pseudos):
     def afficher_classement():
         pseudo_label.config(text="")
         label_timer.config(text="")
-        question_label.config(text="Le quiz est terminé ! \ud83c\udf89", fg="white")
+        question_label.config(text="Le quiz est terminé ! 🎉", fg="white")
         for widget in frame_reponses.winfo_children():
             widget.destroy()
         classement = []
