@@ -31,8 +31,8 @@ def lire_resultat_de(callback):
                     else:
                         print("⚠ Réponse invalide reçue :", ligne)
                         break
-                if time.time() - start_time > 20:
-                    print("⏱ Timeout après 20 secondes sans réponse.")
+                if time.time() - start_time > 60:
+                    print("⏱ Timeout après 60 secondes sans réponse.")
                     break
                 time.sleep(0.1)
             callback(None)
