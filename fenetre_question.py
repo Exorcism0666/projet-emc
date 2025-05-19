@@ -19,7 +19,6 @@ def lire_resultat_de(callback):
             ser.write(b"start\n")
             print("[Python] → 'start' envoyé, attente bouton utilisateur...")
 
-            # Attendre jusqu'à réception d'une ligne correcte
             ligne = ""
             start_time = time.time()
             while True:
@@ -32,18 +31,14 @@ def lire_resultat_de(callback):
                     else:
                         print("⚠ Réponse invalide reçue :", ligne)
                         break
-
-                if time.time() - start_time > 20:  # délai max pour l'interaction
+                if time.time() - start_time > 20:
                     print("⏱ Timeout après 20 secondes sans réponse.")
                     break
                 time.sleep(0.1)
-
             callback(None)
-
     except serial.SerialException as e:
         print("❌ Erreur de communication série:", e)
         callback(None)
-
 
 def lancer_fenetre_question(pseudos):
     fenetre = tk.Toplevel()
@@ -62,7 +57,7 @@ def lancer_fenetre_question(pseudos):
     joueur_actuel_index = 0
 
     timer_id = None
-    temps_restant = 20
+    temps_restant = 60
 
     couleurs_fixes = ["#FF3B30", "#007AFF", "#FFD60A", "#34C759"]
     couleurs_joueurs = {j.strip(): couleurs_fixes[i % len(couleurs_fixes)] for i, j in enumerate(joueurs)}
@@ -112,6 +107,8 @@ def lancer_fenetre_question(pseudos):
 
     def passer_joueur_suivant():
         nonlocal joueur_actuel_index, index_question, timer_id
+        for widget in frame_reponses.winfo_children():
+            widget.destroy()
         if timer_id:
             fenetre.after_cancel(timer_id)
         joueur_actuel_index = (joueur_actuel_index + 1) % nb_joueurs
@@ -189,17 +186,27 @@ def lancer_fenetre_question(pseudos):
             afficher_classement()
 
     def verifier_reponse(reponse):
-        nonlocal joueur_actuel_index, index_question, timer_id
+        nonlocal timer_id
         if timer_id:
             fenetre.after_cancel(timer_id)
+
+        for widget in frame_reponses.winfo_children():
+            widget.config(state="disabled")
+
         joueur = joueurs[joueur_actuel_index].strip()
         questions_posees[joueur] += 1
-        if reponse == questions[index_question]["c"]:
+        bonne_reponse = questions[index_question]["c"]
+        est_bonne = (reponse == bonne_reponse)
+
+        if est_bonne:
             scores[joueur] += 1
             score_vars[joueur].set(scores[joueur])
-        joueur_actuel_index = (joueur_actuel_index + 1) % nb_joueurs
-        index_question += 1
-        afficher_intro_question()
+            question_label.config(text="✅ Bonne réponse !", fg="green")
+        else:
+            question_label.config(text=f"❌ Mauvaise réponse.\nLa bonne réponse était : {bonne_reponse}", fg="red")
+
+        ttk.Button(frame_reponses, text="👉 Continuer", style="Accent.TButton",
+                   command=passer_joueur_suivant).pack(pady=10)
 
     def afficher_classement():
         pseudo_label.config(text="")
@@ -221,22 +228,25 @@ def lancer_fenetre_question(pseudos):
         ttk.Button(frame_reponses, text="Terminer la partie", command=fenetre.destroy, style="Accent.TButton").pack(pady=10)
 
     def abandonner_partie():
-        def confirmer():
+        def confirmer_abandon():
             fenetre.destroy()
+
         confirmation = tk.Toplevel(fenetre)
         confirmation.title("Confirmer l'abandon")
         centrage_de_fenetre(confirmation, 1200, 400)
         confirmation.configure(bg="#1c1c1c")
+        confirmation.resizable(False, False)
         sv.set_theme("dark")
         confirmation.protocol("WM_DELETE_WINDOW", lambda: None)
-        tk.Label(confirmation, text="Voulez-vous abandonner la partie ?", font=("Arial", 11), bg="#1c1c1c", fg="white").pack(pady=20)
+        tk.Label(confirmation, text="Êtes-vous certain de vouloir abandonner la partie ?\nVotre progression ne sera pas conservé", font=("Arial", 20), bg="#1c1c1c", fg="red", wraplength=500).pack(pady=20)
         bouton_frame = tk.Frame(confirmation, bg="#1c1c1c")
         bouton_frame.pack(pady=10)
         ttk.Button(bouton_frame, text="Revenir au jeu", command=confirmation.destroy, style="Accent.TButton").pack(side="left", padx=30)
-        ttk.Button(bouton_frame, text="Abandonner", command=confirmer, style="TButton").pack(side="left", padx=30)
+        ttk.Button(bouton_frame, text="Abandonner", command=confirmer_abandon, style="TButton").pack(side="left", padx=30)
         confirmation.grab_set()
         confirmation.focus_force()
         confirmation.wait_window()
 
     ttk.Button(frame_bas, text="Abandonner la partie", command=abandonner_partie, style="TButton").pack(side="right")
     afficher_intro_question()
+
