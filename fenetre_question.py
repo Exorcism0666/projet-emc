@@ -61,7 +61,7 @@ def lire_resultat_de(callback):
     except serial.SerialException as e:
         print("❌ Erreur de communication série:", e)
         callback(None)
-        
+
 def lancer_fenetre_question(pseudos):
     fenetre = tk.Toplevel()
     fenetre.title("Jeu EMC")
@@ -228,7 +228,7 @@ def lancer_fenetre_question(pseudos):
         else:
             question_label.config(text=f"❌ Mauvaise r\u00e9ponse.\nLa bonne r\u00e9ponse \u00e9tait : {bonne_reponse}", fg="red")
 
-        ttk.Button(frame_reponses, text="🔚 Continuer", style="Accent.TButton",
+        ttk.Button(frame_reponses, text="👉 Continuer", style="Accent.TButton",
                    command=passer_joueur_suivant).pack(pady=10)
 
     def afficher_classement():
