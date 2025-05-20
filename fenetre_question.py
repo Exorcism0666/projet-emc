@@ -19,7 +19,7 @@ def detecter_port_esp32():
             "USB Serial" in port.description or
             "CP210" in port.description or
             "CH340" in port.description):
-            print(f"[INFO] ESP32 d\u00e9tect\u00e9 sur {port.device} ({port.description})")
+            print(f"[INFO] ESP32 détecté sur {port.device} ({port.description})")
             return port.device
     return None
 
@@ -27,37 +27,41 @@ def lire_resultat_de(callback):
     try:
         port = detecter_port_esp32()
         if port is None:
-            print("\u274c Aucun ESP32 d\u00e9tect\u00e9. Veuillez connecter l'appareil.")
+            print("❌ Aucun ESP32 détecté. Veuillez connecter l'appareil.")
             callback(None)
             return
 
         with serial.Serial(port, BAUD_RATE, timeout=30) as ser:
-            time.sleep(2)
+            # Empêche le reset automatique de l'ESP32
+            ser.dtr = False
+            ser.rts = False
+            time.sleep(2.5)  # attendre le boot complet
+
             ser.reset_input_buffer()
             ser.write(b"start\n")
-            print("[Python] → 'start' envoy\u00e9, attente bouton utilisateur...")
+            print("[Python] → 'start' envoyé, attente bouton utilisateur...")
 
             ligne = ""
             start_time = time.time()
             while True:
                 if ser.in_waiting:
                     ligne = ser.readline().decode('utf-8').strip()
-                    print("[Python] ← Re\u00e7u :", ligne)
+                    print("[Python] ← Reçu :", repr(ligne))
                     if ligne.isdigit():
                         callback(int(ligne))
                         return
                     else:
-                        print("\u26a0 R\u00e9ponse invalide re\u00e7ue :", ligne)
+                        print("⚠️ Réponse invalide reçue :", ligne)
                         break
                 if time.time() - start_time > 60:
-                    print("⏱ Timeout apr\u00e8s 60 secondes sans r\u00e9ponse.")
+                    print("⏱ Timeout après 60 secondes sans réponse.")
                     break
                 time.sleep(0.1)
             callback(None)
     except serial.SerialException as e:
-        print("\u274c Erreur de communication s\u00e9rie:", e)
+        print("❌ Erreur de communication série:", e)
         callback(None)
-
+        
 def lancer_fenetre_question(pseudos):
     fenetre = tk.Toplevel()
     fenetre.title("Jeu EMC")
@@ -173,11 +177,12 @@ def lancer_fenetre_question(pseudos):
 
     def apres_lancer_de(valeur):
         if valeur is None:
-            messagebox.showerror("Erreur", "ESP32 non d\u00e9tect\u00e9 ou probl\u00e8me de lecture.\nVeuillez v\u00e9rifier la connexion USB.")
+            messagebox.showerror("Erreur", "ESP32 non détecté ou problème de lecture.\nVeuillez vérifier la connexion USB.")
             afficher_intro_question()
         else:
-            label_timer.config(text=f"🎲 R\u00e9sultat du d\u00e9 : {valeur}", fg="green")
-            fenetre.after(2000, afficher_question)
+            label_timer.config(text=f"🎲 Résultat du dé : {valeur}", fg="green")
+            # Affiche le résultat plus longtemps
+            fenetre.after(4000, afficher_question)
 
     def afficher_question():
         nonlocal index_question, temps_restant, timer_id
