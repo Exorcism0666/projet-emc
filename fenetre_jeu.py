@@ -51,15 +51,11 @@ def afficher_reglement(fenetre_jeu, on_commencer=None):
     pages = [
         {
             "titre": "Objectif du jeu 🕮",
-            "contenu": "Le but du jeu va être de répondre correctement aux questions posées par le programme, sachant qu'il y a un compte à rebours."
+            "contenu": "Le but du jeu va être de répondre correctement aux questions posées par le programme"
         },
         {
             "titre": "Déroulement ⏳",
-            "contenu": "Chaque joueur, à tour de rôle, aura une question avec 4 choix différents. L'une d'entre elles sera bonne, les autres fausses. Si le joueur trouve la bonne réponse, il pourra alors lancer le dé et avancer."
-        },
-        {
-            "titre": "Règles spéciales ✨",
-            "contenu": "1. À définir selon les variantes du jeu.\n2. Par exemple : si un joueur répond 3 bonnes réponses d'affilée, il avance de 2 cases supplémentaires."
+            "contenu": "Chaque joueur, à tour de rôle, devra lancer le dé. il y aura une question avec 4 choix différents. L'une d'entre elles sera bonne, les autres fausses. Si le joueur trouve la bonne réponse, il pourra alors avancer sur le plateau."
         }
     ]
 
