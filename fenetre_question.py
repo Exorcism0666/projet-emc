@@ -7,37 +7,55 @@ import serial
 import threading
 import time
 from utils import centrage_de_fenetre
+from serial.tools import list_ports
 
-SERIAL_PORT = '/dev/ttyUSB0'
 BAUD_RATE = 9600
+
+def detecter_port_esp32():
+    ports = list_ports.comports()
+    for port in ports:
+        if ("ESP32" in port.description or 
+            "Silicon Labs" in str(port.manufacturer) or
+            "USB Serial" in port.description or
+            "CP210" in port.description or
+            "CH340" in port.description):
+            print(f"[INFO] ESP32 d\u00e9tect\u00e9 sur {port.device} ({port.description})")
+            return port.device
+    return None
 
 def lire_resultat_de(callback):
     try:
-        with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=30) as ser:
+        port = detecter_port_esp32()
+        if port is None:
+            print("\u274c Aucun ESP32 d\u00e9tect\u00e9. Veuillez connecter l'appareil.")
+            callback(None)
+            return
+
+        with serial.Serial(port, BAUD_RATE, timeout=30) as ser:
             time.sleep(2)
             ser.reset_input_buffer()
             ser.write(b"start\n")
-            print("[Python] → 'start' envoyé, attente bouton utilisateur...")
+            print("[Python] → 'start' envoy\u00e9, attente bouton utilisateur...")
 
             ligne = ""
             start_time = time.time()
             while True:
                 if ser.in_waiting:
                     ligne = ser.readline().decode('utf-8').strip()
-                    print("[Python] ← Reçu :", ligne)
+                    print("[Python] ← Re\u00e7u :", ligne)
                     if ligne.isdigit():
                         callback(int(ligne))
                         return
                     else:
-                        print("⚠ Réponse invalide reçue :", ligne)
+                        print("\u26a0 R\u00e9ponse invalide re\u00e7ue :", ligne)
                         break
                 if time.time() - start_time > 60:
-                    print("⏱ Timeout après 60 secondes sans réponse.")
+                    print("⏱ Timeout apr\u00e8s 60 secondes sans r\u00e9ponse.")
                     break
                 time.sleep(0.1)
             callback(None)
     except serial.SerialException as e:
-        print("❌ Erreur de communication série:", e)
+        print("\u274c Erreur de communication s\u00e9rie:", e)
         callback(None)
 
 def lancer_fenetre_question(pseudos):
@@ -137,16 +155,16 @@ def lancer_fenetre_question(pseudos):
 
         pseudo_label.config(text=joueur, fg=couleur)
         label_timer.config(text="")
-        question_label.config(text="Appuie sur le bouton (Arduino) pour lancer le dé.", fg="white")
+        question_label.config(text="Appuie sur le bouton (ESP32) pour lancer le d\u00e9.", fg="white")
 
-        bouton_de = ttk.Button(frame_reponses, text="🎲 Lire le résultat du dé", style="Accent.TButton",
-                               command=lire_de_depuis_arduino)
+        bouton_de = ttk.Button(frame_reponses, text="🎲 Lire le r\u00e9sultat du d\u00e9", style="Accent.TButton",
+                               command=lire_de_depuis_esp32)
         bouton_de.pack(pady=20)
 
-    def lire_de_depuis_arduino():
+    def lire_de_depuis_esp32():
         for widget in frame_reponses.winfo_children():
             widget.destroy()
-        label_timer.config(text="Préparation du dé...", fg="gray")
+        label_timer.config(text="Pr\u00e9paration du d\u00e9...", fg="gray")
 
         def thread_fonction():
             lire_resultat_de(lambda val: fenetre.after(0, lambda: apres_lancer_de(val)))
@@ -155,10 +173,10 @@ def lancer_fenetre_question(pseudos):
 
     def apres_lancer_de(valeur):
         if valeur is None:
-            messagebox.showerror("Erreur", "Impossible de lire le résultat du dé depuis l'Arduino.")
+            messagebox.showerror("Erreur", "ESP32 non d\u00e9tect\u00e9 ou probl\u00e8me de lecture.\nVeuillez v\u00e9rifier la connexion USB.")
             afficher_intro_question()
         else:
-            label_timer.config(text=f"🎲 Résultat du dé : {valeur}", fg="green")
+            label_timer.config(text=f"🎲 R\u00e9sultat du d\u00e9 : {valeur}", fg="green")
             fenetre.after(2000, afficher_question)
 
     def afficher_question():
@@ -201,17 +219,17 @@ def lancer_fenetre_question(pseudos):
         if est_bonne:
             scores[joueur] += 1
             score_vars[joueur].set(scores[joueur])
-            question_label.config(text="✅ Bonne réponse !", fg="green")
+            question_label.config(text="✅ Bonne r\u00e9ponse !", fg="green")
         else:
-            question_label.config(text=f"❌ Mauvaise réponse.\nLa bonne réponse était : {bonne_reponse}", fg="red")
+            question_label.config(text=f"❌ Mauvaise r\u00e9ponse.\nLa bonne r\u00e9ponse \u00e9tait : {bonne_reponse}", fg="red")
 
-        ttk.Button(frame_reponses, text="👉 Continuer", style="Accent.TButton",
+        ttk.Button(frame_reponses, text="🔚 Continuer", style="Accent.TButton",
                    command=passer_joueur_suivant).pack(pady=10)
 
     def afficher_classement():
         pseudo_label.config(text="")
         label_timer.config(text="")
-        question_label.config(text="Le quiz est terminé ! 🎉", fg="white")
+        question_label.config(text="Le quiz est termin\u00e9 ! 🎉", fg="white")
         for widget in frame_reponses.winfo_children():
             widget.destroy()
         classement = []
@@ -238,7 +256,7 @@ def lancer_fenetre_question(pseudos):
         confirmation.resizable(False, False)
         sv.set_theme("dark")
         confirmation.protocol("WM_DELETE_WINDOW", lambda: None)
-        tk.Label(confirmation, text="Êtes-vous certain de vouloir abandonner la partie ?\nVotre progression ne sera pas conservé", font=("Arial", 20), bg="#1c1c1c", fg="red", wraplength=500).pack(pady=20)
+        tk.Label(confirmation, text="\u00cates-vous certain de vouloir abandonner la partie ?\nVotre progression ne sera pas conserv\u00e9", font=("Arial", 20), bg="#1c1c1c", fg="red", wraplength=500).pack(pady=20)
         bouton_frame = tk.Frame(confirmation, bg="#1c1c1c")
         bouton_frame.pack(pady=10)
         ttk.Button(bouton_frame, text="Revenir au jeu", command=confirmation.destroy, style="Accent.TButton").pack(side="left", padx=30)
@@ -249,4 +267,3 @@ def lancer_fenetre_question(pseudos):
 
     ttk.Button(frame_bas, text="Abandonner la partie", command=abandonner_partie, style="TButton").pack(side="right")
     afficher_intro_question()
-
