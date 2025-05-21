@@ -186,7 +186,7 @@ def lancer_fenetre_question(pseudos):
 
     def afficher_question():
         nonlocal index_question, temps_restant, timer_id
-        temps_restant = 20
+        temps_restant = 60
         if index_question < len(questions):
             joueur = joueurs[joueur_actuel_index].strip()
             couleur = couleurs_joueurs[joueur]
